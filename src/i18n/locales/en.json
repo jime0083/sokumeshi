@@ -1,0 +1,41 @@
+{
+  "appTitle": "Quick Card",
+  "language": "Language",
+  "home": {
+    "newCard": "Create New",
+    "myCards": "My Cards"
+  },
+  "templateSelect": {
+    "title": "Choose Template",
+    "vertical": "Vertical",
+    "horizontal": "Horizontal"
+  },
+  "frontForm": {
+    "title": "Front",
+    "profileImage": "Profile Image",
+    "pickFromLibrary": "Pick from library",
+    "nameJa": "Name (Japanese)",
+    "nameEn": "Name (English)",
+    "jobTitle": "Job Title",
+    "next": "Back"
+  },
+  "backForm": {
+    "title": "Back",
+    "languages": "Languages / Skills",
+    "frameworks": "Frameworks",
+    "career": "Career",
+    "portfolio": "Portfolio",
+    "create": "Create Card"
+  },
+  "preview": {
+    "title": "My Card",
+    "save": "Save",
+    "share": "Share",
+    "edit": "Edit",
+    "qr": "QR Code",
+    "front": "Front",
+    "back": "Back"
+  }
+}
+
+

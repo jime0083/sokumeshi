@@ -1,0 +1,41 @@
+{
+  "appTitle": "Quick Card",
+  "language": "Language",
+  "home": {
+    "newCard": "新規作成",
+    "myCards": "マイ名刺"
+  },
+  "templateSelect": {
+    "title": "テンプレート選択",
+    "vertical": "縦型",
+    "horizontal": "横型"
+  },
+  "frontForm": {
+    "title": "表面",
+    "profileImage": "アイコン画像",
+    "pickFromLibrary": "カメラロールから選択",
+    "nameJa": "氏名（日本語）",
+    "nameEn": "氏名（英語）",
+    "jobTitle": "職業",
+    "next": "裏面"
+  },
+  "backForm": {
+    "title": "裏面",
+    "languages": "言語・スキル",
+    "frameworks": "FW(フレームワーク)",
+    "career": "経歴",
+    "portfolio": "ポートフォリオ",
+    "create": "名刺作成"
+  },
+  "preview": {
+    "title": "マイ名刺",
+    "save": "保存",
+    "share": "共有",
+    "edit": "編集",
+    "qr": "名刺QRコード",
+    "front": "表面",
+    "back": "裏面"
+  }
+}
+
+
