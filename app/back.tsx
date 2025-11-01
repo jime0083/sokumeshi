@@ -1,4 +1,5 @@
-import { View, Text, TextInput, Pressable } from 'react-native';
+import { View, Text, TextInput, Pressable, ScrollView } from 'react-native';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import { useCardStore } from '@/src/store/cardStore';
@@ -6,10 +7,25 @@ import { useCardStore } from '@/src/store/cardStore';
 export default function BackFormScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { draft, setTechStack, setCareerPortfolio } = useCardStore();
+  const { draft, setTechStack, setCareerPortfolio, setPortfolioLink } = useCardStore();
+  const [careerLines, setCareerLines] = useState<string[]>(['', '', '']);
+
+  useEffect(() => {
+    const lines = (draft.careerPortfolio || '').split('\n').slice(0, 3);
+    while (lines.length < 3) lines.push('');
+    setCareerLines(lines);
+  }, []);
+
+  const updateCareer = (index: number, value: string) => {
+    const trimmed = value.slice(0, 30);
+    const lines = [...careerLines];
+    lines[index] = trimmed;
+    setCareerLines(lines);
+    setCareerPortfolio(lines.join('\n'));
+  };
 
   return (
-    <View style={{ flex: 1, padding: 16 }}>
+    <ScrollView contentContainerStyle={{ padding: 16 }}>
       <Text style={{ fontSize: 18, fontWeight: '700' }}>{t('backForm.title')}</Text>
 
       <Text style={{ marginTop: 12, fontWeight: '600' }}>{t('backForm.languages')}</Text>
@@ -29,19 +45,33 @@ export default function BackFormScreen() {
       />
 
       <Text style={{ marginTop: 12, fontWeight: '600' }}>{t('backForm.career')}</Text>
-      <TextInput
-        placeholder="500文字まで"
-        value={draft.careerPortfolio}
-        onChangeText={(v) => setCareerPortfolio(v.slice(0, 500))}
-        multiline
-        numberOfLines={6}
-        style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, marginTop: 8, height: 140, textAlignVertical: 'top' }}
-      />
+      {[0,1,2].map((i) => (
+        <TextInput
+          key={i}
+          placeholder="30文字程度"
+          value={careerLines[i]}
+          onChangeText={(v) => updateCareer(i, v)}
+          style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, marginTop: i === 0 ? 8 : 10 }}
+        />
+      ))}
+
+      <Text style={{ marginTop: 16, fontWeight: '600' }}>ポートフォリオ</Text>
+      {[0,1].map((i) => (
+        <TextInput
+          key={`p-${i}`}
+          placeholder="URL"
+          value={(draft.portfolioLinks && draft.portfolioLinks[i]) || ''}
+          onChangeText={(v) => setPortfolioLink(i, v)}
+          style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, marginTop: i === 0 ? 8 : 10 }}
+          autoCapitalize="none"
+          autoCorrect={false}
+        />
+      ))}
 
       <Pressable onPress={() => router.push('/preview')} style={{ backgroundColor: '#1e88e5', padding: 16, borderRadius: 12, marginTop: 24 }}>
         <Text style={{ textAlign: 'center', color: '#fff', fontWeight: '700' }}>{t('backForm.create')}</Text>
       </Pressable>
-    </View>
+    </ScrollView>
   );
 }
 

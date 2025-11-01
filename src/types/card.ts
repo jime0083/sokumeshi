@@ -42,6 +42,7 @@ export type CardMeta = {
   socialLinks: SocialLinks;
   techStack: TechStack;
   careerPortfolio?: string;
+  portfolioLinks?: string[];
   createdAt?: number;
   updatedAt?: number;
 };

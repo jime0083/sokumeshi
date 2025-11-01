@@ -1,4 +1,5 @@
-import { View, Text, TextInput, Pressable, Image, Modal } from 'react-native';
+import { View, Text, TextInput, Pressable, Image, Modal, Alert, ScrollView } from 'react-native';
+import { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
@@ -18,8 +19,8 @@ export default function FrontFormScreen() {
   const { t, i18n } = useTranslation();
   const router = useRouter();
   const { draft, setPersonalInfo, setContact } = useCardStore();
-  const [jobModal, setJobModal] = React.useState(false as boolean);
-  const [serviceModal, setServiceModal] = React.useState<{ open: boolean; index: number | null }>({ open: false, index: null });
+  const [jobModal, setJobModal] = useState(false as boolean);
+  const [serviceModal, setServiceModal] = useState<{ open: boolean; index: number | null }>({ open: false, index: null });
 
   const pickImage = async () => {
     const res = await ImagePicker.launchImageLibraryAsync({ quality: 0.9, base64: false });
@@ -29,7 +30,8 @@ export default function FrontFormScreen() {
   };
 
   return (
-    <View style={{ flex: 1, padding: 16 }}>
+    <View style={{ flex: 1 }}>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 16, paddingBottom: 96 }}>
       <Text style={{ fontSize: 18, fontWeight: '700' }}>{t('frontForm.title')}</Text>
 
       <Pressable onPress={pickImage} style={{ marginTop: 12, alignItems: 'center' }}>
@@ -59,8 +61,17 @@ export default function FrontFormScreen() {
       </Pressable>
 
       <Text style={{ marginTop: 16, fontWeight: '700' }}>SNS・連絡先</Text>
-      {[0, 1, 2, 3].map((idx) => {
-        const entry = draft.contacts[idx] || { service: '', url: '' };
+      {(() => {
+        const contacts = (draft.contacts && Array.isArray(draft.contacts))
+          ? draft.contacts
+          : [
+              { service: '', url: '' },
+              { service: '', url: '' },
+              { service: '', url: '' },
+              { service: '', url: '' },
+            ];
+        return [0, 1, 2, 3].map((idx) => {
+          const entry = contacts[idx] || { service: '', url: '' };
         return (
           <View key={idx} style={{ marginTop: 12 }}>
             <Pressable
@@ -70,7 +81,7 @@ export default function FrontFormScreen() {
               <Text>{entry.service ? SERVICE_OPTIONS.find((o) => o.key === entry.service)?.label : 'サービスを選択'}</Text>
             </Pressable>
             <TextInput
-              placeholder="URL または mailto:"
+              placeholder="URL"
               value={entry.url}
               onChangeText={(v) => setContact(idx, { ...entry, url: v })}
               style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, marginTop: 8 }}
@@ -78,11 +89,22 @@ export default function FrontFormScreen() {
               autoCorrect={false}
             />
           </View>
-        );
-      })}
+          );
+        });
+      })()}
 
-      <Pressable onPress={() => router.push('/back')} style={{ backgroundColor: '#1e88e5', padding: 16, borderRadius: 12, marginTop: 24 }}>
-        <Text style={{ textAlign: 'center', color: '#fff', fontWeight: '700' }}>{t('frontForm.next')}</Text>
+      <Pressable
+        onPress={() => {
+          const { nameJa, nameEn } = draft.personalInfo;
+          if (!nameJa || !nameEn) {
+            Alert.alert('名前が入力されていません');
+            return;
+          }
+          router.push('/back');
+        }}
+        style={{ backgroundColor: '#1e88e5', padding: 16, borderRadius: 12, marginTop: 24 }}
+      >
+        <Text style={{ textAlign: 'center', color: '#fff', fontWeight: '700' }}>裏面へ進む</Text>
       </Pressable>
 
       {/* Job modal */}
@@ -122,6 +144,7 @@ export default function FrontFormScreen() {
           </View>
         </Pressable>
       </Modal>
+      </ScrollView>
     </View>
   );
 }

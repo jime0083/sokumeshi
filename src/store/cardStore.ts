@@ -11,6 +11,7 @@ type CardDraft = {
   contacts: ContactEntry[]; // up to 4 entries
   techStack: TechStack;
   careerPortfolio: string;
+  portfolioLinks: string[]; // 2 links for QR
 };
 
 type CardStore = {
@@ -21,6 +22,7 @@ type CardStore = {
   setContact: (index: number, entry: ContactEntry) => void;
   setTechStack: (partial: Partial<TechStack>) => void;
   setCareerPortfolio: (text: string) => void;
+  setPortfolioLink: (index: number, url: string) => void;
   reset: () => void;
 };
 
@@ -37,6 +39,7 @@ const initialDraft: CardDraft = {
   ],
   techStack: { languages: [], frameworks: [] },
   careerPortfolio: '',
+  portfolioLinks: ['', ''],
 };
 
 export const useCardStore = create<CardStore>()(
@@ -66,12 +69,43 @@ export const useCardStore = create<CardStore>()(
       setTechStack: (partial) =>
         set((s) => ({ draft: { ...s.draft, techStack: { ...s.draft.techStack, ...partial } } })),
       setCareerPortfolio: (text) => set((s) => ({ draft: { ...s.draft, careerPortfolio: text } })),
+      setPortfolioLink: (index, url) =>
+        set((s) => {
+          const portfolioLinks = s.draft.portfolioLinks ? [...s.draft.portfolioLinks] : ['', ''];
+          while (portfolioLinks.length < 2) portfolioLinks.push('');
+          portfolioLinks[index] = url;
+          return { draft: { ...s.draft, portfolioLinks } };
+        }),
       reset: () => set({ draft: initialDraft }),
     }),
     {
       name: 'quick-card-draft',
       storage: createJSONStorage(() => AsyncStorage),
-      version: 1,
+      version: 3,
+      migrate: (state: any, version) => {
+        if (!state) return state;
+        const draft = state.draft ?? initialDraft;
+        const contacts = Array.isArray(draft.contacts)
+          ? draft.contacts
+          : [
+              { service: '', url: '' },
+              { service: '', url: '' },
+              { service: '', url: '' },
+              { service: '', url: '' },
+            ];
+        const socialLinks = draft.socialLinks ?? {};
+        const portfolioLinks = Array.isArray(draft.portfolioLinks) ? draft.portfolioLinks : ['', ''];
+        return {
+          ...state,
+          draft: {
+            ...initialDraft,
+            ...draft,
+            contacts,
+            socialLinks,
+            portfolioLinks,
+          },
+        };
+      },
     }
   )
 );

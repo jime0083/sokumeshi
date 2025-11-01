@@ -87,21 +87,22 @@ export default function PreviewScreen() {
         <Text style={{ marginTop: 8 }}>{t('preview.qr')}</Text>
       </View>
 
+      {/* 編集ボタンをQRの下に配置し、テンプレート選択へ */}
+      <Pressable onPress={() => router.replace('/templates')} style={{ marginTop: 12, backgroundColor: '#90a4ae', padding: 14, borderRadius: 10 }}>
+        <Text style={{ textAlign: 'center', color: '#fff' }}>{t('preview.edit')}</Text>
+      </Pressable>
+
       <Text style={{ marginTop: 12, fontWeight: '700' }}>{t('preview.front')}</Text>
       <ViewShot ref={frontRef} options={{ format: 'png', quality: 1 }} style={{ alignItems: 'center', marginTop: 8 }}>
-        <CardPreview />
+        <CardPreview side="front" />
       </ViewShot>
 
       <Text style={{ marginTop: 24, fontWeight: '700' }}>{t('preview.back')}</Text>
       <ViewShot ref={backRef} options={{ format: 'png', quality: 1 }} style={{ alignItems: 'center', marginTop: 8 }}>
-        {/* reuse but scroll has both; for simplicity we capture same component twice; in real app split front/back */}
-        <CardPreview />
+        <CardPreview side="back" />
       </ViewShot>
 
       <View style={{ flexDirection: 'row', gap: 12, marginTop: 24 }}>
-        <Pressable onPress={() => router.back()} style={{ flex: 1, backgroundColor: '#90a4ae', padding: 14, borderRadius: 10 }}>
-          <Text style={{ textAlign: 'center', color: '#fff' }}>{t('preview.edit')}</Text>
-        </Pressable>
         <Pressable onPress={onSaveToAlbum} style={{ flex: 1, backgroundColor: '#1e88e5', padding: 14, borderRadius: 10 }}>
           <Text style={{ textAlign: 'center', color: '#fff' }}>{t('preview.save')}</Text>
         </Pressable>
