@@ -57,7 +57,7 @@ export default function BackFormScreen() {
 
       <Text style={{ marginTop: 16, fontWeight: '600' }}>ポートフォリオ</Text>
       {[0,1].map((i) => (
-        <TextInput
+      <TextInput
           key={`p-${i}`}
           placeholder="URL"
           value={(draft.portfolioLinks && draft.portfolioLinks[i]) || ''}
@@ -65,7 +65,7 @@ export default function BackFormScreen() {
           style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, marginTop: i === 0 ? 8 : 10 }}
           autoCapitalize="none"
           autoCorrect={false}
-        />
+      />
       ))}
 
       <Pressable onPress={() => router.push('/preview')} style={{ backgroundColor: '#1e88e5', padding: 16, borderRadius: 12, marginTop: 24 }}>

@@ -18,7 +18,7 @@ export function FrontTemplate(props: Props) {
   if (id >= 4 && id <= 6) {
     return <FrontH {...props} />;
   }
-  return <Front1 {...props} />;
+      return <Front1 {...props} />;
 }
 
 export function BackTemplate(props: Props & { careerPortfolio?: string; portfolioLinks?: string[] }) {
@@ -26,7 +26,7 @@ export function BackTemplate(props: Props & { careerPortfolio?: string; portfoli
   if (id >= 4 && id <= 6) {
     return <BackH {...props} />;
   }
-  return <Back1 {...props} />;
+      return <Back1 {...props} />;
 }
 
 function Front1({ orientation, personalInfo, socialLinks, contacts, templateId }: Props) {
@@ -60,7 +60,7 @@ function Front1({ orientation, personalInfo, socialLinks, contacts, templateId }
               {row.length === 1 ? <View style={{ width: '48%' }} /> : null}
             </View>
           ))}
-        </View>
+      </View>
       </ImageBackground>
     </CardContainer>
   );
@@ -72,7 +72,7 @@ function Back1({ orientation, techStack, careerPortfolio, portfolioLinks, templa
   return (
     <CardContainer orientation={orientation}>
       <ImageBackground source={backBg} style={{ flex: 1 }} resizeMode="cover">
-        <View style={{ flex: 1, padding: 16 }}>
+      <View style={{ flex: 1, padding: 16 }}>
           <Text style={[styles.sectionTitle, { marginTop: 50 }]}>言語・スキル</Text>
         <Text style={styles.text}>{techStack.languages.join(', ')}</Text>
           <Text style={[styles.sectionTitle, { marginTop: 20 }]}>FW(フレームワーク)</Text>
@@ -81,7 +81,7 @@ function Back1({ orientation, techStack, careerPortfolio, portfolioLinks, templa
           {careerPortfolio ? <Text style={styles.text}>{careerPortfolio}</Text> : null}
 
           {((portfolioLinks || []).filter(Boolean).length > 0) ? (
-            <>
+          <>
               <Text style={[styles.sectionTitle, { marginTop: 20 }]}>ポートフォリオ</Text>
               <View style={{ flexDirection: 'row', justifyContent: 'flex-start', gap: 16, marginTop: 12 }}>
                 {(portfolioLinks || []).filter(Boolean).slice(0,2).map((url, idx) => (
@@ -168,9 +168,9 @@ function BackH({ orientation, techStack, careerPortfolio, portfolioLinks, templa
                     <QRCode key={idx} value={String(url)} size={28} />
                   ))}
                 </View>
-              </>
-            ) : null}
-          </View>
+          </>
+        ) : null}
+      </View>
 
           {/* Right: career */}
           <View style={{ flex: 1, paddingLeft: 8 }}>

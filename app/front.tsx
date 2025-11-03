@@ -80,7 +80,7 @@ export default function FrontFormScreen() {
             >
               <Text>{entry.service ? SERVICE_OPTIONS.find((o) => o.key === entry.service)?.label : 'サービスを選択'}</Text>
             </Pressable>
-            <TextInput
+      <TextInput
               placeholder="URL"
               value={entry.url}
               onChangeText={(v) => setContact(idx, { ...entry, url: v })}

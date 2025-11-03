@@ -1,4 +1,4 @@
-import { ref, uploadString, getDownloadURL } from 'firebase/storage';
+import { ref, uploadString, getDownloadURL, deleteObject } from 'firebase/storage';
 import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { storage, db, ensureAnonymousAuth } from './firebase';
 import { CardMeta } from '@/src/types/card';
@@ -18,6 +18,13 @@ export async function saveCardImagesAndMeta(params: {
   const uid = await ensureAnonymousAuth();
   const cardId = params.meta.cardId;
   const basePath = `business_cards/${uid}/${cardId}`;
+  // 1ユーザー1枚: 既存の画像を事前に削除
+  try {
+    await deleteObject(ref(storage, `${basePath}/front.png`));
+  } catch {}
+  try {
+    await deleteObject(ref(storage, `${basePath}/back.png`));
+  } catch {}
   const frontUrl = await uploadPng(params.frontBase64, `${basePath}/front.png`);
   const backUrl = await uploadPng(params.backBase64, `${basePath}/back.png`);
 

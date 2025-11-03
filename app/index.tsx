@@ -17,14 +17,14 @@ export default function HomeScreen() {
     })();
   }, []);
   if (!rootState?.key || !dest) {
-    return (
-      <View style={{ flex: 1, padding: 16, paddingTop: 48 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Text style={{ fontSize: 20, fontWeight: '700' }}>{t('appTitle')}</Text>
-          <LanguageSwitcher />
-        </View>
+  return (
+    <View style={{ flex: 1, padding: 16, paddingTop: 48 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Text style={{ fontSize: 20, fontWeight: '700' }}>{t('appTitle')}</Text>
+        <LanguageSwitcher />
       </View>
-    );
+    </View>
+  );
   }
   return <Redirect href={`/${dest}`} />;
 }

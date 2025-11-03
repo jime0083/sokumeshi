@@ -6,16 +6,16 @@ export default function CardPreview({ side }: { side: 'front' | 'back' }) {
   const { draft } = useCardStore();
   if (!draft.templateId || !draft.orientation) return null;
   if (side === 'front') {
-    return (
+  return (
       <View style={{ alignItems: 'center' }}>
-        <FrontTemplate
-          orientation={draft.orientation}
-          templateId={draft.templateId}
-          personalInfo={draft.personalInfo}
-          socialLinks={draft.socialLinks}
-          techStack={draft.techStack}
+      <FrontTemplate
+        orientation={draft.orientation}
+        templateId={draft.templateId}
+        personalInfo={draft.personalInfo}
+        socialLinks={draft.socialLinks}
+        techStack={draft.techStack}
           contacts={draft.contacts}
-        />
+      />
       </View>
     );
   }

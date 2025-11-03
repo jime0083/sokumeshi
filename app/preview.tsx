@@ -3,7 +3,6 @@ import { useRef, useState } from 'react';
 import ViewShot from 'react-native-view-shot';
 import QRCode from 'react-native-qrcode-svg';
 import * as MediaLibrary from 'expo-media-library';
-import * as Sharing from 'expo-sharing';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import CardPreview from '@/components/CardPreview';
@@ -71,12 +70,7 @@ export default function PreviewScreen() {
     Alert.alert('保存しました');
   };
 
-  const onShare = async () => {
-    const file = await frontRef.current?.capture?.({ result: 'tmpfile' });
-    if (file && (await Sharing.isAvailableAsync())) {
-      await Sharing.shareAsync(file);
-    }
-  };
+  // 共有ボタンは削除（QRは保存後に生成）
 
   return (
     <ScrollView contentContainerStyle={{ padding: 16 }}>
@@ -84,7 +78,7 @@ export default function PreviewScreen() {
 
       <View style={{ alignItems: 'center', marginTop: 12 }}>
         {shortUrl ? <QRCode value={shortUrl} size={200} /> : <View style={{ width: 200, height: 200, backgroundColor: '#eee' }} />}
-        <Text style={{ marginTop: 8 }}>{t('preview.qr')}</Text>
+        <Text style={{ marginTop: 8 }}>名刺QRコード(QRコードは保存ボタンタップ後に生成されます)</Text>
       </View>
 
       {/* 編集ボタンをQRの下に配置し、テンプレート選択へ */}
@@ -105,9 +99,6 @@ export default function PreviewScreen() {
       <View style={{ flexDirection: 'row', gap: 12, marginTop: 24 }}>
         <Pressable onPress={onSaveToAlbum} style={{ flex: 1, backgroundColor: '#1e88e5', padding: 14, borderRadius: 10 }}>
           <Text style={{ textAlign: 'center', color: '#fff' }}>{t('preview.save')}</Text>
-        </Pressable>
-        <Pressable onPress={onShare} style={{ flex: 1, backgroundColor: '#00acc1', padding: 14, borderRadius: 10 }}>
-          <Text style={{ textAlign: 'center', color: '#fff' }}>{t('preview.share')}</Text>
         </Pressable>
       </View>
 

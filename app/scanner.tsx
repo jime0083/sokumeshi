@@ -15,7 +15,7 @@ export default function ScannerScreen() {
         const mod: ScannerModule = await import('expo-barcode-scanner');
         setBarCodeScanner(() => mod.BarCodeScanner);
         const { status } = await mod.requestPermissionsAsync();
-        setHasPermission(status === 'granted');
+      setHasPermission(status === 'granted');
       } catch (e) {
         // Webや未リンク環境ではスキャナを無効化
         setHasPermission(false);
@@ -33,14 +33,14 @@ export default function ScannerScreen() {
   return (
     <View style={{ flex: 1 }}>
       {BarCodeScanner ? (
-        <BarCodeScanner
+      <BarCodeScanner
           onBarCodeScanned={({ data }: any) => {
-            if (scanned) return;
-            setScanned(true);
-            Linking.openURL(data);
-          }}
-          style={{ flex: 1 }}
-        />
+          if (scanned) return;
+          setScanned(true);
+          Linking.openURL(data);
+        }}
+        style={{ flex: 1 }}
+      />
       ) : (
         <Text>Loading scanner…</Text>
       )}

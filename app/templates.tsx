@@ -73,14 +73,14 @@ export default function TemplateSelectScreen() {
           : { borderRadius: 10, overflow: 'hidden' };
 
           return (
-            <Pressable
-              key={tpl.id}
+        <Pressable
+          key={tpl.id}
               style={{ backgroundColor: '#f5f5f5', padding: 10, marginBottom: 12, borderRadius: 12 }}
-              onPress={() => {
-                setTemplate(tpl.id, tpl.orientation);
-                router.push('/front');
-              }}
-            >
+          onPress={() => {
+            setTemplate(tpl.id, tpl.orientation);
+            router.push('/front');
+          }}
+        >
               <View style={wrapperStyle}>
                 <Image source={tpl.image} style={imgStyle as any} />
               </View>
