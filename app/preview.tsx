@@ -8,7 +8,7 @@ import { useRouter } from 'expo-router';
 import CardPreview from '@/components/CardPreview';
 import { useCardStore } from '@/src/store/cardStore';
 import { saveCardImagesAndMeta } from '@/src/services/storage';
-import { createShortLink } from '@/src/services/dynamicLinks';
+// Dynamic Links 非推奨のため、Firebase Hosting のURLを直接QR化します
 import { ensureAnonymousAuth } from '@/src/services/firebase';
 import { setSavedCardMeta } from '@/src/services/saved';
 
@@ -32,9 +32,10 @@ export default function PreviewScreen() {
       if (!frontBase64 || !backBase64) throw new Error('capture failed');
       const uid = await ensureAnonymousAuth();
       const cardId = uid;
-      const deep = `https://example.com/card/${cardId}`; // replace by hosted deep link path
-      const short = await createShortLink({ link: deep });
-      setShortUrl(short);
+      const hostingDomain = (require('expo-constants').default.expoConfig?.extra as any)?.dynamicLinks?.domain || '';
+      const deep = `${String(hostingDomain).replace(/\/$/, '')}/c/${cardId}`;
+      const short = deep;
+      setShortUrl(deep);
       const saved = await saveCardImagesAndMeta({
         frontBase64,
         backBase64,
@@ -87,24 +88,25 @@ export default function PreviewScreen() {
       </Pressable>
 
       <Text style={{ marginTop: 12, fontWeight: '700' }}>{t('preview.front')}</Text>
-      <ViewShot ref={frontRef} options={{ format: 'png', quality: 1 }} style={{ alignItems: 'center', marginTop: 8 }}>
+      <ViewShot ref={frontRef} options={{ format: 'png', quality: 1, result: 'base64' }} style={{ alignItems: 'center', marginTop: 8 }}>
         <CardPreview side="front" />
       </ViewShot>
 
       <Text style={{ marginTop: 24, fontWeight: '700' }}>{t('preview.back')}</Text>
-      <ViewShot ref={backRef} options={{ format: 'png', quality: 1 }} style={{ alignItems: 'center', marginTop: 8 }}>
+      <ViewShot ref={backRef} options={{ format: 'png', quality: 1, result: 'base64' }} style={{ alignItems: 'center', marginTop: 8 }}>
         <CardPreview side="back" />
       </ViewShot>
 
-      <View style={{ flexDirection: 'row', gap: 12, marginTop: 24 }}>
+      {/* 保存ボタンの順番：上にFirebase保存（→QR生成）、下にスマホ保存 */}
+      <Pressable onPress={onSaveFirebase} disabled={saving} style={{ marginTop: 24, backgroundColor: '#43a047', padding: 14, borderRadius: 10 }}>
+        <Text style={{ textAlign: 'center', color: '#fff' }}>{saving ? '保存中...' : '保存'}</Text>
+      </Pressable>
+
+      <View style={{ flexDirection: 'row', gap: 12, marginTop: 12 }}>
         <Pressable onPress={onSaveToAlbum} style={{ flex: 1, backgroundColor: '#1e88e5', padding: 14, borderRadius: 10 }}>
-          <Text style={{ textAlign: 'center', color: '#fff' }}>{t('preview.save')}</Text>
+          <Text style={{ textAlign: 'center', color: '#fff' }}>画像にしてスマホに保存</Text>
         </Pressable>
       </View>
-
-      <Pressable onPress={onSaveFirebase} disabled={saving} style={{ marginTop: 12, backgroundColor: '#43a047', padding: 14, borderRadius: 10 }}>
-        <Text style={{ textAlign: 'center', color: '#fff' }}>{saving ? '保存中...' : 'Firebaseへ保存'}</Text>
-      </Pressable>
     </ScrollView>
   );
 }

@@ -3,9 +3,17 @@ import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { storage, db, ensureAnonymousAuth } from './firebase';
 import { CardMeta } from '@/src/types/card';
 
+function sanitizeBase64(input: string): string {
+  // remove data url prefix if present
+  let s = input.replace(/^data:image\/\w+;base64,/, '');
+  // strip any non-base64 characters (newlines, colons, spaces, etc.)
+  s = s.replace(/[^A-Za-z0-9+/=]/g, '');
+  return s;
+}
+
 async function uploadPng(base64: string, path: string): Promise<string> {
   const storageRef = ref(storage, path);
-  const cleaned = base64.replace(/^data:image\/\w+;base64,/, '');
+  const cleaned = sanitizeBase64(base64);
   await uploadString(storageRef, cleaned, 'base64', { contentType: 'image/png' });
   return await getDownloadURL(storageRef);
 }

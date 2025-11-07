@@ -4,23 +4,28 @@
     "slug": "sokumeishi",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "assets/images/icons/social/github.png",
     "scheme": "sokumeishi",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.yourdomain.sokumeishi"
+      "bundleIdentifier": "com.yourdomain.sokumeishi",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "foregroundImage": "assets/images/icons/social/github.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.CAMERA"
+      ],
+      "package": "com.yourdomain.sokumeishi"
     },
     "web": {
       "output": "static",
@@ -31,7 +36,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "assets/images/templates/vertical/1.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
@@ -40,20 +45,23 @@
           }
         }
       ],
-      "expo-localization",
-      "expo-barcode-scanner"
+      "expo-localization"
     ],
     "extra": {
       "firebase": {
-        "apiKey": "YOUR_API_KEY",
-        "authDomain": "YOUR_AUTH_DOMAIN",
-        "projectId": "YOUR_PROJECT_ID",
-        "storageBucket": "YOUR_STORAGE_BUCKET",
-        "messagingSenderId": "YOUR_SENDER_ID",
-        "appId": "YOUR_APP_ID"
+        "apiKey": "AIzaSyAJEPTKaZy7SATjujYXaavZRC7f64wElAY",
+        "authDomain": "sokumeshi-58f06.firebaseapp.com",
+        "projectId": "sokumeshi-58f06",
+        "storageBucket": "sokumeshi-58f06.firebasestorage.app",
+        "messagingSenderId": "379655181547",
+        "appId": "1:379655181547:web:66af2a6c445243b3379aae"
       },
       "dynamicLinks": {
-        "domain": "https://businesscard.page.link"
+        "domain": "https://sokumeshi-58f06.web.app"
+      },
+      "router": {},
+      "eas": {
+        "projectId": "6db53103-8041-42b0-bb67-903a450e3112"
       }
     },
     "experiments": {
