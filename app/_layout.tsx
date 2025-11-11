@@ -1,3 +1,4 @@
+import { Blob } from 'expo-blob';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -6,6 +7,9 @@ import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useEffect } from 'react';
 import { initializeI18n } from '@/src/i18n';
+
+// expo-blob provides a Blob implementation that matches the Web API.
+globalThis.Blob = Blob as unknown;
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();

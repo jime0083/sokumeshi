@@ -27,6 +27,8 @@ export default function PreviewScreen() {
     if (!draft.templateId || !draft.orientation) return;
     try {
       setSaving(true);
+      // ViewShot returns pure base64 (without data url prefix).
+      // The uploader side converts it to data URL safely, so base64 here is OK.
       const frontBase64 = await frontRef.current?.capture?.({ result: 'base64' });
       const backBase64 = await backRef.current?.capture?.({ result: 'base64' });
       if (!frontBase64 || !backBase64) throw new Error('capture failed');
@@ -100,7 +102,7 @@ export default function PreviewScreen() {
       {/* 保存ボタンの順番：上にFirebase保存（→QR生成）、下にスマホ保存 */}
       <Pressable onPress={onSaveFirebase} disabled={saving} style={{ marginTop: 24, backgroundColor: '#43a047', padding: 14, borderRadius: 10 }}>
         <Text style={{ textAlign: 'center', color: '#fff' }}>{saving ? '保存中...' : '保存'}</Text>
-      </Pressable>
+        </Pressable>
 
       <View style={{ flexDirection: 'row', gap: 12, marginTop: 12 }}>
         <Pressable onPress={onSaveToAlbum} style={{ flex: 1, backgroundColor: '#1e88e5', padding: 14, borderRadius: 10 }}>

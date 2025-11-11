@@ -1,4 +1,4 @@
-import { ref, uploadString, getDownloadURL, deleteObject } from 'firebase/storage';
+import { ref, deleteObject, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { storage, db, ensureAnonymousAuth } from './firebase';
 import { CardMeta } from '@/src/types/card';
@@ -11,10 +11,19 @@ function sanitizeBase64(input: string): string {
   return s;
 }
 
+function base64ToUint8Array(base64: string): Uint8Array {
+  const cleaned = sanitizeBase64(base64);
+  const binary = global.atob(cleaned);
+  const len = binary.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes;
+}
+
 async function uploadPng(base64: string, path: string): Promise<string> {
   const storageRef = ref(storage, path);
-  const cleaned = sanitizeBase64(base64);
-  await uploadString(storageRef, cleaned, 'base64', { contentType: 'image/png' });
+  const bytes = base64ToUint8Array(base64);
+  await uploadBytes(storageRef, bytes, { contentType: 'image/png' });
   return await getDownloadURL(storageRef);
 }
 
