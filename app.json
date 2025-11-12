@@ -4,10 +4,10 @@
     "slug": "sokumeishi",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "assets/images/icons/social/github.png",
+    "icon": "assets/images/icons/social/app-icon.png",
     "scheme": "sokumeishi",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.yourdomain.sokumeishi",
@@ -18,7 +18,7 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "assets/images/icons/social/github.png"
+        "foregroundImage": "assets/images/icons/social/app-icon.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
@@ -65,7 +65,7 @@
       }
     },
     "experiments": {
-      "typedRoutes": true
+      "typedRoutes": false
     }
   }
 }

@@ -47,16 +47,16 @@ export default function FrontFormScreen() {
         placeholder={t('frontForm.nameJa')}
         value={draft.personalInfo.nameJa}
         onChangeText={(v) => setPersonalInfo({ nameJa: v })}
-        style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, marginTop: 16 }}
+        style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, marginTop: 16, backgroundColor: '#fff' }}
       />
       <TextInput
         placeholder={t('frontForm.nameEn')}
         value={draft.personalInfo.nameEn}
         onChangeText={(v) => setPersonalInfo({ nameEn: v })}
-        style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, marginTop: 12 }}
+        style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, marginTop: 12, backgroundColor: '#fff' }}
       />
       <Text style={{ marginTop: 12, fontWeight: '600' }}>{t('frontForm.jobTitle')}</Text>
-      <Pressable onPress={() => setJobModal(true)} style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, marginTop: 6 }}>
+      <Pressable onPress={() => setJobModal(true)} style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, marginTop: 6, backgroundColor: '#fff' }}>
         <Text>{draft.personalInfo.jobTitle || '選択してください'}</Text>
       </Pressable>
 
@@ -76,7 +76,7 @@ export default function FrontFormScreen() {
           <View key={idx} style={{ marginTop: 12 }}>
             <Pressable
               onPress={() => setServiceModal({ open: true, index: idx })}
-              style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12 }}
+              style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, backgroundColor: '#fff' }}
             >
               <Text>{entry.service ? SERVICE_OPTIONS.find((o) => o.key === entry.service)?.label : 'サービスを選択'}</Text>
             </Pressable>
@@ -84,7 +84,7 @@ export default function FrontFormScreen() {
               placeholder="URL"
               value={entry.url}
               onChangeText={(v) => setContact(idx, { ...entry, url: v })}
-              style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, marginTop: 8 }}
+              style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, marginTop: 8, backgroundColor: '#fff' }}
               autoCapitalize="none"
               autoCorrect={false}
             />

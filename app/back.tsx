@@ -33,7 +33,7 @@ export default function BackFormScreen() {
         placeholder="JavaScript, TypeScript, Python"
         value={draft.techStack.languages.join(', ')}
         onChangeText={(v) => setTechStack({ languages: v.split(',').map((s) => s.trim()).filter(Boolean) })}
-        style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, marginTop: 8 }}
+        style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, marginTop: 8, backgroundColor: '#fff' }}
       />
 
       <Text style={{ marginTop: 12, fontWeight: '600' }}>{t('backForm.frameworks')}</Text>
@@ -41,7 +41,7 @@ export default function BackFormScreen() {
         placeholder="React, React Native, Django"
         value={draft.techStack.frameworks.join(', ')}
         onChangeText={(v) => setTechStack({ frameworks: v.split(',').map((s) => s.trim()).filter(Boolean) })}
-        style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, marginTop: 8 }}
+        style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, marginTop: 8, backgroundColor: '#fff' }}
       />
 
       <Text style={{ marginTop: 12, fontWeight: '600' }}>{t('backForm.career')}</Text>
@@ -51,7 +51,7 @@ export default function BackFormScreen() {
           placeholder="30文字程度"
           value={careerLines[i]}
           onChangeText={(v) => updateCareer(i, v)}
-          style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, marginTop: i === 0 ? 8 : 10 }}
+          style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, marginTop: i === 0 ? 8 : 10, backgroundColor: '#fff' }}
         />
       ))}
 
@@ -62,7 +62,7 @@ export default function BackFormScreen() {
           placeholder="URL"
           value={(draft.portfolioLinks && draft.portfolioLinks[i]) || ''}
           onChangeText={(v) => setPortfolioLink(i, v)}
-          style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, marginTop: i === 0 ? 8 : 10 }}
+          style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, marginTop: i === 0 ? 8 : 10, backgroundColor: '#fff' }}
           autoCapitalize="none"
           autoCorrect={false}
       />
