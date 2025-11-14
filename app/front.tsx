@@ -30,9 +30,12 @@ export default function FrontFormScreen() {
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 16, paddingBottom: 96 }}>
-      <Text style={{ fontSize: 18, fontWeight: '700', color: '#fff' }}>{t('frontForm.title')}</Text>
+    <View style={{ flex: 1, backgroundColor: '#fff' }}>
+      <ScrollView
+        style={{ flex: 1, backgroundColor: '#fff' }}
+        contentContainerStyle={{ padding: 16, paddingBottom: 96 }}
+      >
+      <Text style={{ fontSize: 18, fontWeight: '700', color: '#000' }}>{t('frontForm.title')}</Text>
 
       <Pressable onPress={pickImage} style={{ marginTop: 12, alignItems: 'center' }}>
         {draft.personalInfo.profileImage ? (
@@ -57,12 +60,12 @@ export default function FrontFormScreen() {
         style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, marginTop: 12, backgroundColor: '#fff', color: '#000' }}
         placeholderTextColor="#666"
       />
-      <Text style={{ marginTop: 12, fontWeight: '600', color: '#fff' }}>{t('frontForm.jobTitle')}</Text>
+      <Text style={{ marginTop: 12, fontWeight: '600', color: '#000' }}>{t('frontForm.jobTitle')}</Text>
       <Pressable onPress={() => setJobModal(true)} style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, marginTop: 6, backgroundColor: '#fff' }}>
         <Text style={{ color: '#000' }}>{draft.personalInfo.jobTitle || '選択してください'}</Text>
       </Pressable>
 
-      <Text style={{ marginTop: 16, fontWeight: '700', color: '#fff' }}>SNS・連絡先</Text>
+      <Text style={{ marginTop: 16, fontWeight: '700', color: '#000' }}>SNS・連絡先</Text>
       {(() => {
         const contacts = (draft.contacts && Array.isArray(draft.contacts))
           ? draft.contacts
@@ -85,7 +88,7 @@ export default function FrontFormScreen() {
       <TextInput
               placeholder="URL"
               value={entry.url}
-              onChangeText={(v) => setContact(idx, { ...entry, url: v })}
+              onChangeText={(v) => setContact(idx, { ...(entry as any), url: v })}
               style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, marginTop: 8, backgroundColor: '#fff', color: '#000' }}
               placeholderTextColor="#666"
               autoCapitalize="none"
@@ -109,6 +112,9 @@ export default function FrontFormScreen() {
       >
         <Text style={{ textAlign: 'center', color: '#fff', fontWeight: '700' }}>裏面へ進む</Text>
       </Pressable>
+
+      {/* キーボードで隠れないように下部に余白を確保 */}
+      <View style={{ height: 100 }} />
 
       {/* Job modal */}
       <Modal transparent visible={jobModal} animationType="fade" onRequestClose={() => setJobModal(false)}>

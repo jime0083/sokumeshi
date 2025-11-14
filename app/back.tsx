@@ -25,10 +25,13 @@ export default function BackFormScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 16 }}>
-      <Text style={{ fontSize: 18, fontWeight: '700', color: '#fff' }}>{t('backForm.title')}</Text>
+    <ScrollView
+      style={{ flex: 1, backgroundColor: '#fff' }}
+      contentContainerStyle={{ padding: 16 }}
+    >
+      <Text style={{ fontSize: 18, fontWeight: '700', color: '#000' }}>{t('backForm.title')}</Text>
 
-      <Text style={{ marginTop: 12, fontWeight: '600', color: '#fff' }}>{t('backForm.languages')}</Text>
+      <Text style={{ marginTop: 12, fontWeight: '600', color: '#000' }}>{t('backForm.languages')}</Text>
       <TextInput
         placeholder="JavaScript, TypeScript, Python"
         value={draft.techStack.languages.join(', ')}
@@ -37,7 +40,7 @@ export default function BackFormScreen() {
         placeholderTextColor="#666"
       />
 
-      <Text style={{ marginTop: 12, fontWeight: '600', color: '#fff' }}>{t('backForm.frameworks')}</Text>
+      <Text style={{ marginTop: 12, fontWeight: '600', color: '#000' }}>{t('backForm.frameworks')}</Text>
       <TextInput
         placeholder="React, React Native, Django"
         value={draft.techStack.frameworks.join(', ')}
@@ -46,7 +49,7 @@ export default function BackFormScreen() {
         placeholderTextColor="#666"
       />
 
-      <Text style={{ marginTop: 12, fontWeight: '600', color: '#fff' }}>{t('backForm.career')}</Text>
+      <Text style={{ marginTop: 12, fontWeight: '600', color: '#000' }}>{t('backForm.career')}</Text>
       {[0,1,2].map((i) => (
         <TextInput
           key={i}
@@ -58,7 +61,7 @@ export default function BackFormScreen() {
         />
       ))}
 
-      <Text style={{ marginTop: 16, fontWeight: '600', color: '#fff' }}>ポートフォリオ</Text>
+      <Text style={{ marginTop: 16, fontWeight: '600', color: '#000' }}>ポートフォリオ</Text>
       {[0,1].map((i) => (
       <TextInput
           key={`p-${i}`}
@@ -75,6 +78,9 @@ export default function BackFormScreen() {
       <Pressable onPress={() => router.push('/preview')} style={{ backgroundColor: '#1e88e5', padding: 16, borderRadius: 12, marginTop: 24 }}>
         <Text style={{ textAlign: 'center', color: '#fff', fontWeight: '700' }}>{t('backForm.create')}</Text>
       </Pressable>
+
+      {/* 経歴3行目・ポートフォリオ入力時にキーボードで隠れないように下部に余白を確保 */}
+      <View style={{ height: 150 }} />
     </ScrollView>
   );
 }

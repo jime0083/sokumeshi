@@ -8,12 +8,12 @@ import { getSavedCardMeta } from '@/src/services/saved';
 export default function HomeScreen() {
   const { t } = useTranslation();
   const rootState = useRootNavigationState();
-  const [dest, setDest] = useState<'qr' | 'templates' | null>(null);
+  const [dest, setDest] = useState<'preview' | 'templates' | null>(null);
 
   useEffect(() => {
     (async () => {
       const saved = await getSavedCardMeta();
-      setDest(saved?.shortUrl ? 'qr' : 'templates');
+      setDest(saved?.shortUrl ? 'preview' : 'templates');
     })();
   }, []);
   if (!rootState?.key || !dest) {

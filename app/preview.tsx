@@ -1,5 +1,5 @@
 import { View, Text, Pressable, Alert, ScrollView } from 'react-native';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import ViewShot from 'react-native-view-shot';
 import QRCode from 'react-native-qrcode-svg';
 import * as MediaLibrary from 'expo-media-library';
@@ -10,7 +10,7 @@ import { useCardStore } from '@/src/store/cardStore';
 import { saveCardImagesAndMeta } from '@/src/services/storage';
 // Dynamic Links 非推奨のため、Firebase Hosting のURLを直接QR化します
 import { ensureAnonymousAuth } from '@/src/services/firebase';
-import { setSavedCardMeta } from '@/src/services/saved';
+import { setSavedCardMeta, getSavedCardMeta } from '@/src/services/saved';
 import Constants from 'expo-constants';
 
 // 1ユーザー1枚: uidをそのままcardIdに
@@ -24,6 +24,20 @@ export default function PreviewScreen() {
   const frontRef = useRef<ViewShot>(null);
   const backRef = useRef<ViewShot>(null);
 
+  // アプリ再起動時など、保存済みの名刺からQRコードを復元
+  useEffect(() => {
+    (async () => {
+      try {
+        const saved = await getSavedCardMeta();
+        if (saved?.shortUrl) {
+          setShortUrl(saved.shortUrl);
+        }
+      } catch (e) {
+        console.warn('[Preview] 保存済みQRコードの読み込みに失敗しました', e);
+      }
+    })();
+  }, []);
+
   const onSaveFirebase = async () => {
     if (!draft.templateId || !draft.orientation) {
       Alert.alert('エラー', 'テンプレートが選択されていません');
@@ -35,8 +49,8 @@ export default function PreviewScreen() {
       
       // ViewShot returns pure base64 (without data url prefix).
       // The uploader side converts it to data URL safely, so base64 here is OK.
-      const frontBase64 = await frontRef.current?.capture?.({ result: 'base64' });
-      const backBase64 = await backRef.current?.capture?.({ result: 'base64' });
+      const frontBase64 = await (frontRef.current as any)?.capture?.({ result: 'base64' });
+      const backBase64 = await (backRef.current as any)?.capture?.({ result: 'base64' });
       
       if (!frontBase64 || !backBase64) {
         console.error('[エラー] キャプチャ失敗');
@@ -93,8 +107,8 @@ export default function PreviewScreen() {
   const onSaveToAlbum = async () => {
     const { status } = await MediaLibrary.requestPermissionsAsync();
     if (status !== 'granted') return;
-    const front = await frontRef.current?.capture?.({ result: 'tmpfile' });
-    const back = await backRef.current?.capture?.({ result: 'tmpfile' });
+    const front = await (frontRef.current as any)?.capture?.({ result: 'tmpfile' });
+    const back = await (backRef.current as any)?.capture?.({ result: 'tmpfile' });
     if (front) await MediaLibrary.saveToLibraryAsync(front);
     if (back) await MediaLibrary.saveToLibraryAsync(back);
     Alert.alert('保存しました');
@@ -103,8 +117,11 @@ export default function PreviewScreen() {
   // 共有ボタンは削除（QRは保存後に生成）
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 16 }}>
-      <Text style={{ fontSize: 18, fontWeight: '700' }}>{t('preview.title')}</Text>
+    <ScrollView
+      style={{ flex: 1, backgroundColor: '#fff' }}
+      contentContainerStyle={{ padding: 16 }}
+    >
+      <Text style={{ fontSize: 18, fontWeight: '700', color: '#000' }}>{t('preview.title')}</Text>
 
       <View style={{ alignItems: 'center', marginTop: 12 }}>
         {shortUrl ? <QRCode value={shortUrl} size={200} /> : <View style={{ width: 200, height: 200, backgroundColor: '#eee' }} />}
@@ -116,12 +133,12 @@ export default function PreviewScreen() {
         <Text style={{ textAlign: 'center', color: '#fff' }}>{t('preview.edit')}</Text>
       </Pressable>
 
-      <Text style={{ marginTop: 12, fontWeight: '700' }}>{t('preview.front')}</Text>
+      <Text style={{ marginTop: 12, fontWeight: '700', color: '#000' }}>{t('preview.front')}</Text>
       <ViewShot ref={frontRef} options={{ format: 'png', quality: 1, result: 'base64' }} style={{ alignItems: 'center', marginTop: 8 }}>
         <CardPreview side="front" />
       </ViewShot>
 
-      <Text style={{ marginTop: 24, fontWeight: '700' }}>{t('preview.back')}</Text>
+      <Text style={{ marginTop: 24, fontWeight: '700', color: '#000' }}>{t('preview.back')}</Text>
       <ViewShot ref={backRef} options={{ format: 'png', quality: 1, result: 'base64' }} style={{ alignItems: 'center', marginTop: 8 }}>
         <CardPreview side="back" />
       </ViewShot>

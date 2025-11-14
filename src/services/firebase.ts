@@ -86,13 +86,13 @@ export async function ensureAnonymousAuth(): Promise<string> {
   }
 
   try {
-    const cred = await signInAnonymously(auth);
+  const cred = await signInAnonymously(auth);
     console.log('[認証成功] 匿名ログイン完了:', cred.user.uid);
     console.log('[認証成功] ユーザー情報:', {
       uid: cred.user.uid,
       isAnonymous: cred.user.isAnonymous
     });
-    return cred.user.uid;
+  return cred.user.uid;
   } catch (error: any) {
     console.error('[認証エラー]', error);
     console.error('[認証エラー詳細] code:', error.code);

@@ -1,4 +1,13 @@
-import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  serverTimestamp,
+  setDoc,
+  where,
+  deleteDoc,
+} from 'firebase/firestore';
 import { db, ensureAnonymousAuth } from './firebase';
 import { CardMeta } from '@/src/types/card';
 
@@ -17,6 +26,25 @@ export async function saveCardImagesAndMeta(params: {
 }): Promise<CardMeta> {
   const uid = await ensureAnonymousAuth();
   const cardId = params.meta.cardId;
+
+  // ユーザー1人につき名刺データは1件のみとするため、
+  // 先にこのユーザーの既存カード（今回保存するcardId以外）を削除する
+  try {
+    const cardsCol = collection(db, 'cards');
+    const q = query(cardsCol, where('userId', '==', uid));
+    const snaps = await getDocs(q);
+    const deletions: Promise<void>[] = [];
+    snaps.forEach((docSnap) => {
+      if (docSnap.id !== cardId) {
+        deletions.push(deleteDoc(docSnap.ref));
+      }
+    });
+    if (deletions.length > 0) {
+      await Promise.all(deletions);
+    }
+  } catch (e) {
+    console.warn('[保存] 既存の名刺データ削除に失敗しましたが、新しいデータの保存は続行します', e);
+  }
 
   // Firebase Storage を経由せず、画像データURLをそのまま Firestore に保存する
   const cleanedFront = sanitizeBase64(params.frontBase64);

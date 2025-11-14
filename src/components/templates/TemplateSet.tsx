@@ -35,7 +35,7 @@ function Front1({ orientation, personalInfo, socialLinks, contacts, templateId }
   return (
     <CardContainer orientation={orientation}>
       <ImageBackground source={frontBg} style={{ flex: 1 }} resizeMode="cover">
-        <View style={{ alignItems: 'center', marginTop: 60 }}>
+        <View style={{ alignItems: 'center', marginTop: 80 }}>
           {personalInfo.profileImage ? (
             <Image source={{ uri: personalInfo.profileImage }} style={styles.avatar} />
           ) : (
@@ -47,6 +47,7 @@ function Front1({ orientation, personalInfo, socialLinks, contacts, templateId }
             <Text
               style={[
                 styles.job,
+                styles.jobLarge, // テンプレート1〜3では職業の文字サイズを1.5倍に
                 id === 2 ? { marginTop: 18 } : null, // テンプレート2のみ職業の上に 10px 追加
               ]}
             >
@@ -238,6 +239,7 @@ const styles = StyleSheet.create({
   nameJa: { marginTop: 12, fontSize: 20, fontWeight: '600' },
   nameEn: { marginTop: 4, fontSize: 14, color: '#666' },
   job: { marginTop: 8, fontSize: 14, color: '#e53935' },
+  jobLarge: { fontSize: 18 }, // テンプレート1〜3用（従来14ptの1.5倍）
   sectionTitle: { fontSize: 16, fontWeight: '700', color: '#1565c0' },
   text: { fontSize: 14, color: '#333' },
 });
