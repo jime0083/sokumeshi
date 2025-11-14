@@ -30,7 +30,8 @@ export function BackTemplate(props: Props & { careerPortfolio?: string; portfoli
 }
 
 function Front1({ orientation, personalInfo, socialLinks, contacts, templateId }: Props) {
-  const frontBg = getFrontBackgroundByTemplateId(templateIdFromIdStr(templateId));
+  const id = templateIdFromIdStr(templateId);
+  const frontBg = getFrontBackgroundByTemplateId(id);
   return (
     <CardContainer orientation={orientation}>
       <ImageBackground source={frontBg} style={{ flex: 1 }} resizeMode="cover">
@@ -42,7 +43,16 @@ function Front1({ orientation, personalInfo, socialLinks, contacts, templateId }
           )}
           <Text style={styles.nameJa}>{personalInfo.nameJa}</Text>
           <Text style={styles.nameEn}>{personalInfo.nameEn}</Text>
-          {personalInfo.jobTitle ? <Text style={styles.job}>{personalInfo.jobTitle}</Text> : null}
+          {personalInfo.jobTitle ? (
+            <Text
+              style={[
+                styles.job,
+                id === 2 ? { marginTop: 18 } : null, // テンプレート2のみ職業の上に 10px 追加
+              ]}
+            >
+              {personalInfo.jobTitle}
+            </Text>
+          ) : null}
         </View>
         {/* Social icons + QR in 2x2 pairs with 20px top space */}
         <View style={{ marginTop: 20, paddingHorizontal: 16 }}>

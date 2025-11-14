@@ -48,14 +48,6 @@
       "expo-localization"
     ],
     "extra": {
-      "firebase": {
-        "apiKey": "AIzaSyAJEPTKaZy7SATjujYXaavZRC7f64wElAY",
-        "authDomain": "sokumeshi-58f06.firebaseapp.com",
-        "projectId": "sokumeshi-58f06",
-        "storageBucket": "sokumeshi-58f06.firebasestorage.app",
-        "messagingSenderId": "379655181547",
-        "appId": "1:379655181547:web:66af2a6c445243b3379aae"
-      },
       "dynamicLinks": {
         "domain": "https://sokumeshi-58f06.web.app"
       },

@@ -26,15 +26,15 @@ export default function QRScreen() {
 
   const share = async () => {
     if (!url || !(await Sharing.isAvailableAsync())) return copy();
-    await Sharing.shareAsync(undefined, { dialogTitle: '名刺リンク', UTI: url });
+    await Sharing.shareAsync(url, { dialogTitle: '名刺リンク' });
   };
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 16 }}>
       {url ? (
         <>
-          <QRCode value={url} size={220} />
-          <Text style={{ marginTop: 12 }}>{url}</Text>
+          <QRCode value={url} size={180} />
+          <Text style={{ marginTop: 16 }}>{url}</Text>
           <View style={{ flexDirection: 'row', gap: 12, marginTop: 16 }}>
             <Pressable onPress={copy} style={{ backgroundColor: '#90a4ae', padding: 12, borderRadius: 10 }}>
               <Text style={{ color: '#fff' }}>コピー</Text>
