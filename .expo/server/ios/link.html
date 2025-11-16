@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>名刺リンク</title>
+  <style>
+    body { font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; margin: 16px; }
+    .card { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 16px; }
+    .card img { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,.1); }
+    .tip { color: #666; font-size: 14px; margin-top: 8px; }
+  </style>
+  <script>
+    // Prevent iOS from auto detecting phone numbers
+    document.addEventListener('DOMContentLoaded', function(){
+      var meta = document.createElement('meta');
+      meta.name = 'format-detection';
+      meta.content = 'telephone=no';
+      document.head.appendChild(meta);
+    });
+  </script>
+  <meta name="format-detection" content="telephone=no" />
+</head>
+<body>
+  <h3>名刺を表示しています</h3>
+  <div class="tip">アプリがインストールされていれば自動的に起動します。</div>
+  <div id="content" class="card"></div>
+
+  <script type="module">
+    // 1) cardId を URL から取得 (/c/{cardId})
+    const cardId = location.pathname.split('/').filter(Boolean).slice(-1)[0] || '';
+
+    // 2) まずアプリ起動（失敗時は何も起きない）。少し待ってからWeb表示へ
+    const schemeUrl = `sokumeishi://card/${cardId}`;
+    const start = Date.now();
+    const tryOpen = () => { window.location.href = schemeUrl; };
+    tryOpen();
+
+    // 3) Webフォールバック: Firestoreから画像URLを取得して表示
+    const showWeb = async () => {
+      const firebaseConfig = {
+        apiKey: "AIzaSyAJEPTKaZy7SATjujYXaavZRC7f64wElAY",
+        authDomain: "sokumeshi-58f06.firebaseapp.com",
+        projectId: "sokumeshi-58f06",
+        storageBucket: "sokumeshi-58f06.firebasestorage.app",
+        messagingSenderId: "379655181547",
+        appId: "1:379655181547:web:66af2a6c445243b3379aae"
+      };
+
+      const [{ initializeApp }, { getFirestore, doc, getDoc }] = await Promise.all([
+        import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js'),
+        import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js'),
+      ]);
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const snap = await getDoc(doc(db, 'cards', cardId));
+      const data = snap.exists() ? snap.data() : null;
+
+      const content = document.getElementById('content');
+      content.innerHTML = '';
+      if (!data) {
+        content.innerHTML = '<div>名刺が見つかりませんでした。</div>';
+        return;
+      }
+
+      const front = document.createElement('img');
+      front.src = data.frontImageUrl;
+      front.alt = '表面';
+
+      const back = document.createElement('img');
+      back.src = data.backImageUrl;
+      back.alt = '裏面';
+
+      content.appendChild(front);
+      content.appendChild(back);
+    };
+
+    // 500〜800msほど待ってフォールバック
+    setTimeout(() => {
+      if (Date.now() - start < 1500) showWeb();
+    }, 800);
+  </script>
+</body>
+</html>
+
+

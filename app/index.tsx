@@ -1,12 +1,11 @@
 import { Redirect, useRootNavigationState } from 'expo-router';
-import { View, Text } from 'react-native';
+import { View, Image } from 'react-native';
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { getSavedCardMeta } from '@/src/services/saved';
 
+const loadingGif = require('@/assets/images/icons/social/loading.gif');
+
 export default function HomeScreen() {
-  const { t } = useTranslation();
   const rootState = useRootNavigationState();
   const [dest, setDest] = useState<'preview' | 'templates' | null>(null);
 
@@ -17,14 +16,23 @@ export default function HomeScreen() {
     })();
   }, []);
   if (!rootState?.key || !dest) {
-  return (
-    <View style={{ flex: 1, padding: 16, paddingTop: 48 }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Text style={{ fontSize: 20, fontWeight: '700' }}>{t('appTitle')}</Text>
-        <LanguageSwitcher />
+    // ルートナビゲーションや保存データの判定中はローディングアニメーションを表示
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: '#000', // GIF が目立つよう黒背景に
+        }}
+      >
+        <Image
+          source={loadingGif}
+          style={{ width: 160, height: 160 }}
+          resizeMode="contain"
+        />
       </View>
-    </View>
-  );
+    );
   }
   return <Redirect href={`/${dest}`} />;
 }
