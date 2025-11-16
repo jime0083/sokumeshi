@@ -25,7 +25,8 @@ export async function saveCardImagesAndMeta(params: {
   meta: Omit<CardMeta, 'frontImageUrl' | 'backImageUrl' | 'createdAt' | 'updatedAt' | 'userId'>;
 }): Promise<CardMeta> {
   const uid = await ensureAnonymousAuth();
-  const cardId = params.meta.cardId;
+  // 1ユーザーにつき1枚のみ保存できるよう、cardId は常に uid を使用する
+  const cardId = uid;
 
   // ユーザー1人につき名刺データは1件のみとするため、
   // 先にこのユーザーの既存カード（今回保存するcardId以外）を削除する
@@ -46,6 +47,35 @@ export async function saveCardImagesAndMeta(params: {
     console.warn('[保存] 既存の名刺データ削除に失敗しましたが、新しいデータの保存は続行します', e);
   }
 
+  // さらに、古いバージョンで userId を持たずに保存された名刺も
+  // 「同じ名前のユーザーの古いデータ」とみなして削除する（レガシーデータクリーンアップ）
+  try {
+    const allSnaps = await getDocs(collection(db, 'cards'));
+    const legacyDeletions: Promise<void>[] = [];
+
+    allSnaps.forEach((docSnap) => {
+      if (docSnap.id === cardId) return; // 今回保存するカードは対象外
+      const data: any = docSnap.data();
+
+      const hasUserId = !!data.userId;
+      const sameName =
+        data.personalInfo &&
+        data.personalInfo.nameJa === (params.meta as any).personalInfo?.nameJa &&
+        data.personalInfo.nameEn === (params.meta as any).personalInfo?.nameEn;
+
+      // userId を持たない古いレコードで、同じ名前のユーザーのものは削除対象にする
+      if (!hasUserId && sameName) {
+        legacyDeletions.push(deleteDoc(docSnap.ref));
+      }
+    });
+
+    if (legacyDeletions.length > 0) {
+      await Promise.all(legacyDeletions);
+    }
+  } catch (e) {
+    console.warn('[保存] レガシー名刺データのクリーンアップに失敗しましたが、新しいデータの保存は続行します', e);
+  }
+
   // Firebase Storage を経由せず、画像データURLをそのまま Firestore に保存する
   const cleanedFront = sanitizeBase64(params.frontBase64);
   const cleanedBack = sanitizeBase64(params.backBase64);
@@ -54,6 +84,7 @@ export async function saveCardImagesAndMeta(params: {
 
   const meta: CardMeta = {
     ...params.meta,
+    cardId,
     userId: uid,
     frontImageUrl: frontUrl,
     backImageUrl: backUrl,

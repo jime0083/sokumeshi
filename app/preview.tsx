@@ -134,13 +134,48 @@ export default function PreviewScreen() {
       </Pressable>
 
       <Text style={{ marginTop: 12, fontWeight: '700', color: '#000' }}>{t('preview.front')}</Text>
-      <ViewShot ref={frontRef} options={{ format: 'png', quality: 1, result: 'base64' }} style={{ alignItems: 'center', marginTop: 8 }}>
-        <CardPreview side="front" />
+      <ViewShot
+        ref={frontRef}
+        options={{ format: 'png', quality: 1, result: 'base64' }}
+        style={{ alignItems: 'center', marginTop: 8 }}
+      >
+        {/* 名刺の周りに薄い影を付けてカード境界をわかりやすくする */}
+        <View
+          style={{
+            padding: 8,
+            borderRadius: 16,
+            backgroundColor: '#fff',
+            shadowColor: '#000',
+            shadowOpacity: 0.12,
+            shadowRadius: 12,
+            shadowOffset: { width: 0, height: 4 },
+            elevation: 4,
+          }}
+        >
+          <CardPreview side="front" />
+        </View>
       </ViewShot>
 
       <Text style={{ marginTop: 24, fontWeight: '700', color: '#000' }}>{t('preview.back')}</Text>
-      <ViewShot ref={backRef} options={{ format: 'png', quality: 1, result: 'base64' }} style={{ alignItems: 'center', marginTop: 8 }}>
-        <CardPreview side="back" />
+      <ViewShot
+        ref={backRef}
+        options={{ format: 'png', quality: 1, result: 'base64' }}
+        style={{ alignItems: 'center', marginTop: 8 }}
+      >
+        <View
+          style={{
+            padding: 8,
+            borderRadius: 16,
+            backgroundColor: '#fff',
+            shadowColor: '#000',
+            shadowOpacity: 0.12,
+            shadowRadius: 12,
+            shadowOffset: { width: 0, height: 4 },
+            elevation: 4,
+          }}
+        >
+          <CardPreview side="back" />
+        </View>
       </ViewShot>
 
       {/* 保存ボタンの順番：上にFirebase保存（→QR生成）、下にスマホ保存 */}
