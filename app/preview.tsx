@@ -3,6 +3,7 @@ import { useRef, useState, useEffect } from 'react';
 import ViewShot from 'react-native-view-shot';
 import QRCode from 'react-native-qrcode-svg';
 import * as MediaLibrary from 'expo-media-library';
+import * as FileSystem from 'expo-file-system/legacy';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import CardPreview from '@/components/CardPreview';
@@ -105,13 +106,57 @@ export default function PreviewScreen() {
   };
 
   const onSaveToAlbum = async () => {
-    const { status } = await MediaLibrary.requestPermissionsAsync();
-    if (status !== 'granted') return;
-    const front = await (frontRef.current as any)?.capture?.({ result: 'tmpfile' });
-    const back = await (backRef.current as any)?.capture?.({ result: 'tmpfile' });
-    if (front) await MediaLibrary.saveToLibraryAsync(front);
-    if (back) await MediaLibrary.saveToLibraryAsync(back);
-    Alert.alert('保存しました');
+    try {
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('権限エラー', '設定アプリから写真へのアクセスを許可してください。');
+        return;
+      }
+
+      // 表・裏を base64 PNG としてキャプチャ
+      const frontBase64 = await (frontRef.current as any)?.capture?.({
+        result: 'base64',
+        format: 'png',
+        quality: 1,
+      });
+      const backBase64 = await (backRef.current as any)?.capture?.({
+        result: 'base64',
+        format: 'png',
+        quality: 1,
+      });
+
+      if (!frontBase64 && !backBase64) {
+        Alert.alert('エラー', '画像のキャプチャに失敗しました。');
+        return;
+      }
+
+      const tasks: Promise<any>[] = [];
+
+      if (frontBase64) {
+        const frontPath = `${FileSystem.cacheDirectory}card_front_${Date.now()}.png`;
+        await FileSystem.writeAsStringAsync(frontPath, frontBase64, {
+          encoding: 'base64',
+        });
+        tasks.push(MediaLibrary.saveToLibraryAsync(frontPath));
+      }
+
+      if (backBase64) {
+        const backPath = `${FileSystem.cacheDirectory}card_back_${Date.now()}.png`;
+        await FileSystem.writeAsStringAsync(backPath, backBase64, {
+          encoding: 'base64',
+        });
+        tasks.push(MediaLibrary.saveToLibraryAsync(backPath));
+      }
+
+      if (tasks.length > 0) {
+        await Promise.all(tasks);
+      }
+
+      Alert.alert('保存しました', '名刺画像をカメラロールに保存しました。');
+    } catch (e) {
+      console.error('[アルバム保存エラー]', e);
+      Alert.alert('エラー', '画像の保存に失敗しました。');
+    }
   };
 
   // 共有ボタンは削除（QRは保存後に生成）
