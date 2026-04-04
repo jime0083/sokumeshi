@@ -2,7 +2,7 @@
   "expo": {
     "name": "sokumeishi",
     "slug": "sokumeishi",
-    "version": "1.02",
+    "version": "1.03",
     "orientation": "portrait",
     "icon": "assets/images/icons/social/app-icon.png",
     "scheme": "sokumeishi",

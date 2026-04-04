@@ -4,7 +4,8 @@
       "Bash(find:*)",
       "Bash(sips:*)",
       "Bash(pod install)",
-      "Bash(open:*)"
+      "Bash(open:*)",
+      "Bash(/usr/libexec/PlistBuddy:*)"
     ]
   }
 }
