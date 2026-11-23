@@ -21,12 +21,13 @@ Phase 1: 開発基盤とリポジトリ整理
               (3) node_modules がローカルに残り `npx expo --version` が動く (4) 履歴の書き換えをしていない
     ※完了(2026-11-23): レビューPASS(禁止パターン追跡0件・ios/追跡一覧がHEADと一致・解除ファイルの現存をサンプル確認・HEAD不変)
 
-[ ] 1-2 不要ファイルの削除(Android・バックアップ・Web名残)
+[x] 1-2 不要ファイルの削除(Android・バックアップ・Web名残)
     内容: android_backup/, ios_backup/, "sokumeishi 2025-11-17 14-24-55/", quick-card/, scripts/reset-project.js,
           public/_well-known_backup/, expo-web.log を削除。README.md を本アプリの説明(起動・テスト・ビルド手順)に置き換える。
           app.json から android ブロックと web ブロックを削除
     完了条件: (1) 上記が存在しない (2) app.json に android / web キーがない (3) README.md に Expo テンプレート文言がない
               (4) `npx tsc --noEmit` のエラーが既存の2件以外に増えていない
+    ※完了(2026-11-23): レビューPASS(削除対象の非存在・app.jsonはandroid/web削除のみ・README整合・tscエラー既存2件のみ・ios/無傷)
 
 [ ] 1-3 未使用コードの削除
     内容: app/qr.tsx, app/modal.tsx, src/services/dynamicLinks.ts、どこからも import されていない components/*(hello-wave,
@@ -39,7 +40,7 @@ Phase 1: 開発基盤とリポジトリ整理
 [ ] 1-4 未使用パッケージの削除
     内容: package.json の依存のうち、app/ src/ components/ hooks/ から import されていないもの(候補: expo-sharing, expo-clipboard,
           react-native-web, react-dom, expo-web-browser, expo-symbols, @react-navigation/bottom-tabs, expo-blob, expo-haptics 等。
-          grep で0件確認できたもののみ)を削除し、`pod install` を実行。package.json の web スクリプト・android スクリプトを削除
+          grep で0件確認できたもののみ)を削除し、`pod install` を実行。package.json の web・android・reset-project スクリプトを削除(P-012)
     完了条件: (1) 削除したパッケージの import が0件 (2) `pod install` 成功 (3) `npx expo run:ios` でシミュレータにビルド・起動できる
               (4) 起動後テンプレート画面が表示される(スクリーンショット)
 

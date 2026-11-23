@@ -1,50 +1,40 @@
-# Welcome to your Expo app 👋
+# ソクメイシ
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+エンジニア・個人開発者向けに、約10分でデジタル名刺を作成し QR コードで共有できる iOS アプリ(Expo / Firebase)。
 
-## Get started
+## 前提
 
-1. Install dependencies
+- Node.js
+- Xcode 26
+- CocoaPods
 
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## セットアップ
 
 ```bash
-npm run reset-project
+npm install
+cd ios && pod install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## 起動
 
-## Learn more
+```bash
+npx expo run:ios
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+シミュレータでビルド・起動する。Firebase Emulator に接続する場合は `EXPO_PUBLIC_USE_FIREBASE_EMULATOR=1` を付けて実行する。
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## ビルド
 
-## Join the community
+ローカルの Xcode で `ios/sokumeishi.xcworkspace` を開き、Archive する(`expo prebuild` で `ios/` を再生成しない)。
 
-Join our community of developers creating universal apps.
+## テスト
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Phase 1 で追加予定(`npm run typecheck` / `npm run lint` / `npm test` / `npm run test:rules` など)。
+
+## ドキュメント
+
+- `requirements.md`: 仕様の唯一の正
+- `CLAUDE.md`: プロジェクトルール
+- `progress.txt`: 実装タスクの進捗
+- `manual-work.txt`: 手動作業タスク
+- `problem.txt`: 問題管理

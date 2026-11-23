@@ -118,3 +118,12 @@
 - 状態: 修正中
 - 特定した原因: node_modules(約4.9万ファイル)・.ipa・debug.keystore が追跡されている。tsc エラー2件。console 出力と LogBox.ignoreAllLogs
 - 切り出したタスク: 1-1〜1-5, 4-3
+
+## P-012: package.json の reset-project スクリプトが参照切れ
+- 記録日: 2026-11-23
+- 状態: 修正中
+- 発生箇所: package.json scripts.reset-project(1-2 のレビューで発見)
+- 問題内容: 1-2 で scripts/reset-project.js を削除したため `npm run reset-project` が失敗する
+- 原因調査: package.json の scripts を確認。参照先ファイルが 1-2 で削除済み
+- 特定した原因: スクリプト定義だけが残っている
+- 切り出したタスク: 1-4(scripts 整理に reset-project 削除を追加)
