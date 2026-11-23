@@ -1,0 +1,200 @@
+# ソクメイシ - 実装タスク進捗 (progress.txt)
+# 運用ルール:
+# - 各タスクは sokumeishi-impl で実装し、sokumeishi-review の検証合格で [x] にする
+# - [security] 付きタスクは review の前に sokumeishi-security の確認を受け、指摘ゼロにする
+# - タスクは上から順に実施する(依存関係順)
+# - Phase開始前に manual-work.txt の最終ラインを必ず確認する
+# - 仕様の根拠は requirements.md を参照(UI/UX変更禁止・iOSのみ・新機能なし)
+# - Phaseの全タスク完了時に git commit と git push sokumeshi master を行う
+# - 完了時は「※完了(YYYY-MM-DD): レビューPASS(検証内容の要約)」を追記する
+# - 全タスクは CLAUDE.md のタスクの大きさの基準(6項目)で確認済み(2026-11-23)
+
+=====================================
+Phase 1: 開発基盤とリポジトリ整理
+=====================================
+
+[x] 1-1 git 追跡対象の整理
+    内容: ルート .gitignore に node_modules/, ios/Pods/, ios/build/, .expo/, *.ipa, *.keystore, .DS_Store,
+          expo-web.log, *.xcuserstate, xcuserdata/ を追加し、`git rm -r --cached` で追跡から外す(ローカルのファイルは消さない)。
+          ios/ のソース(Info.plist, AppDelegate.swift, pbxproj, Podfile, Podfile.lock 等)は追跡を続ける
+    完了条件: (1) `git ls-files` に上記パターンが0件 (2) ios/ のソースファイルは追跡されたまま
+              (3) node_modules がローカルに残り `npx expo --version` が動く (4) 履歴の書き換えをしていない
+    ※完了(2026-11-23): レビューPASS(禁止パターン追跡0件・ios/追跡一覧がHEADと一致・解除ファイルの現存をサンプル確認・HEAD不変)
+
+[ ] 1-2 不要ファイルの削除(Android・バックアップ・Web名残)
+    内容: android_backup/, ios_backup/, "sokumeishi 2025-11-17 14-24-55/", quick-card/, scripts/reset-project.js,
+          public/_well-known_backup/, expo-web.log を削除。README.md を本アプリの説明(起動・テスト・ビルド手順)に置き換える。
+          app.json から android ブロックと web ブロックを削除
+    完了条件: (1) 上記が存在しない (2) app.json に android / web キーがない (3) README.md に Expo テンプレート文言がない
+              (4) `npx tsc --noEmit` のエラーが既存の2件以外に増えていない
+
+[ ] 1-3 未使用コードの削除
+    内容: app/qr.tsx, app/modal.tsx, src/services/dynamicLinks.ts、どこからも import されていない components/*(hello-wave,
+          parallax-scroll-view, themed-text, themed-view, external-link, haptic-tab, ui/*, LanguageSwitcher)と hooks/constants の
+          未使用ファイルを削除。app/_layout.tsx から実在しない Stack.Screen(scanner, card/[cardId])を削除。
+          src/services/firebase.ts の Android 分岐を削除。削除前に grep で未使用を確認すること
+    完了条件: (1) 削除ファイルへの参照が grep で0件 (2) `npx tsc --noEmit` のエラーが既存2件以外に増えていない
+              (3) `npx expo export --platform ios` がエラーなく完了(バンドル確認) (4) 画面の見た目・遷移に変化なし(コード差分で確認)
+
+[ ] 1-4 未使用パッケージの削除
+    内容: package.json の依存のうち、app/ src/ components/ hooks/ から import されていないもの(候補: expo-sharing, expo-clipboard,
+          react-native-web, react-dom, expo-web-browser, expo-symbols, @react-navigation/bottom-tabs, expo-blob, expo-haptics 等。
+          grep で0件確認できたもののみ)を削除し、`pod install` を実行。package.json の web スクリプト・android スクリプトを削除
+    完了条件: (1) 削除したパッケージの import が0件 (2) `pod install` 成功 (3) `npx expo run:ios` でシミュレータにビルド・起動できる
+              (4) 起動後テンプレート画面が表示される(スクリーンショット)
+
+[ ] 1-5 型エラー解消と typecheck / lint スクリプト追加
+    内容: app/templates.tsx(overflow の型)と src/i18n/index.ts(compatibilityJSON 'v3')の型エラーを、表示を変えずに解消。
+          package.json に "typecheck": "tsc --noEmit" を追加
+    完了条件: (1) `npm run typecheck` エラー0 (2) `npm run lint` がエラー0(警告は可) (3) テンプレート画面・i18n の挙動に変化なし(コード差分で確認)
+
+[ ] 1-6 [検証] jest-expo と expo-router/testing-library の動作確認(30分)
+    内容: Expo SDK 54 / expo-router 6 / React 19.1 の組み合わせで jest-expo プリセットと renderRouter が動くか、
+          リポジトリ外(スクラッチ)の最小構成で確かめ、必要な設定(transformIgnorePatterns、AsyncStorage・reanimated のモック等)を報告する
+    完了条件: (1) 最小テスト1本が通った構成と手順の報告 (2) 制約・注意点の報告 (3) リポジトリに変更が残っていない
+
+[ ] 1-7 Jest 基盤導入と cardStore ユニットテスト
+    内容: jest-expo・jest・@types/jest を devDependencies に追加し jest 設定と "test" スクリプトを追加。
+          src/store/cardStore.ts の setContact(socialLinks 導出)・setPortfolioLink・migrate のユニットテストを書く
+    完了条件: (1) `npm test` が通る (2) cardStore の上記3機能にテストがある (3) `npm run typecheck` エラー0
+
+[ ] 1-8 画面テスト基盤(renderRouter)導入
+    内容: @testing-library/react-native を追加し、renderRouter で templates → front(氏名未入力でアラート、入力で back へ)→ back → preview
+          の遷移と、戻ったときの入力値保持を確認する画面テストを書く(Firebase 呼び出しはモック)
+    完了条件: (1) `npm test` が通る (2) 遷移・戻る・入力値保持・氏名未入力アラートのテストがある (3) ルーターをモックしていない
+
+[ ] 1-9 [検証] Firebase Emulator とルールテストの動作確認(30分)
+    内容: firebase-tools 15 + Java で Firestore Emulator がプロジェクトID demo-sokumeishi で起動し、@firebase/rules-unit-testing
+          (firebase 12 と共存可能な版)でテストが動くかスクラッチで確認する
+    完了条件: (1) 動いた版・手順の報告 (2) 制約の報告 (3) リポジトリに変更が残っていない
+
+[ ] 1-10 ルールテスト基盤導入 [security]
+    ※2026-11-23 変更: W1 を待たずに進める(ユーザー承認)。W1 の最終ラインは W2 前に変更
+    内容: firestore.rules を全面拒否(`allow read, write: if false;`)の仮ルールで作成し、firebase.json に firestore.rules と
+          emulators(firestore, hosting)設定を追加。@firebase/rules-unit-testing を追加し、"test:rules"
+          (`firebase emulators:exec --only firestore --project demo-sokumeishi ...`)と "emulators" スクリプトを追加。
+          仮ルールで未認証 get が拒否されることを確かめるテストを1本書く(本実装は 2-2)。
+          ※この時点の firestore.rules は本番にデプロイしない(デプロイは W2 のみ)
+    完了条件: (1) `npm run test:rules` が通る (2) テストが本番プロジェクトに接続しない(demo- ID)
+              (3) firebase.json の既存 hosting 設定が変わっていない
+
+[ ] 1-11 アプリの Emulator 接続切替 [security]
+    内容: src/services/firebase.ts で `__DEV__ && process.env.EXPO_PUBLIC_USE_FIREBASE_EMULATOR === '1'` のときだけ
+          connectFirestoreEmulator / connectAuthEmulator に接続する。本番ビルドでは絶対に接続しない
+    完了条件: (1) フラグ付きでシミュレータ起動し保存すると Emulator にドキュメントができ、本番に書かれない
+              (2) フラグなし・本番ビルドでは接続コードが動かない(ユニットテスト) (3) `npm run typecheck` / `npm test` 緑
+
+=====================================
+Phase 2: セキュリティ修正
+=====================================
+
+[ ] 2-1 危険なクライアント処理の削除 [security]
+    内容: src/services/storage.ts の「userId で自分のカードを検索して削除」「cards 全件取得してレガシー削除」処理を削除し、
+          setDoc(cards/{uid}) のみにする。src/services/firebase.ts のデバッグ用 accounts:signUp 直接呼び出し・
+          Google 接続テスト・認証デバッグ出力を削除
+    完了条件: (1) getDocs / deleteDoc / query が storage.ts から消えている (2) 保存処理が setDoc 1回だけであるユニットテスト
+              (3) identitytoolkit への fetch がコードに存在しない (4) `npm run typecheck` / `npm test` 緑
+
+[ ] 2-2 Firestore ルール本実装 [security]
+    内容: requirements.md §4.2 のとおり firestore.rules を書き換え、Emulator テストを書く
+    完了条件: (1) 未認証 get 可・list 不可 (2) 本人のみ create/update/delete 可、他人は不可 (3) 許可キー外・不正 orientation は拒否
+              (4) v1.03 形式(PNG data URL、profileImage あり、portfolioLinks なし)の本人書き込みが許可 (5) `npm run test:rules` 緑
+
+[ ] 2-3 本番ルール反映の確認(読み取りのみ)
+    ※開始前確認: manual-work W2(Firestore ルールの本番デプロイ)完了必須
+    内容: 本番に対し未認証で (a) cards 一覧取得 (b) 存在しない cardId の get を REST で実行する(読み取りのみ)
+    完了条件: (1) (a) が 403 (2) (b) が 404(=get は許可されている) (3) 書き込み・削除をしていない
+
+=====================================
+Phase 3: 不具合修正
+=====================================
+
+[ ] 3-1 認証復元待ち [security]
+    内容: ensureAnonymousAuth で `await auth.authStateReady()` の後に currentUser を確認し、なければ signInAnonymously する
+    完了条件: (1) 復元済みユーザーがいる場合に新規作成しないユニットテスト (2) いない場合に1回だけ作成するユニットテスト
+              (3) `npm run typecheck` / `npm test` 緑
+
+[ ] 3-2 [検証] JPEG キャプチャのサイズ計測(30分)
+    内容: Emulator 接続のシミュレータ(iPhone 15 Pro Max)で6テンプレート×プロフィール写真ありの表裏を JPEG でキャプチャし、
+          品質・幅の組み合わせごとの base64 文字数を計測。requirements.md §4.3 の条件を満たす値を提案する
+    完了条件: (1) 計測表の報告 (2) 推奨値(format / quality / width)とその根拠 (3) リポジトリに変更が残っていない
+    ※完了後、メインエージェントが決定値を requirements.md §4.3 に追記する
+
+[ ] 3-3 アップロード画像の JPEG 化とサイズガード [security]
+    内容: preview.tsx の保存(Firebase)用キャプチャを §4.3 の決定値の JPEG にし、storage.ts で data:image/jpeg を組み立てる。
+          表裏合計 900,000 文字超ならアップロードせずエラー(§3.3 文言)。カメラロール保存は PNG のまま
+    完了条件: (1) サイズガードのユニットテスト (2) Emulator 接続で6テンプレートとも保存成功 (3) カメラロール保存が PNG のまま
+              (4) 画面の見た目に変化なし (5) `npm run typecheck` / `npm test` 緑
+
+[ ] 3-4 プロフィール写真の永続化 [security]
+    内容: §4.3 のとおり選択時に documentDirectory/profile/ へコピーし相対ファイル名を保存、表示時に解決。起動時の既存パス移行。
+          Firestore へ送る personalInfo から profileImage を除く
+    完了条件: (1) コピー・解決・移行のユニットテスト (2) シミュレータでアプリ再起動後も写真が表示される
+              (3) 送信データに profileImage がないユニットテスト (4) `npm run typecheck` / `npm test` 緑
+
+[ ] 3-5 ポートフォリオ URL の保存漏れ修正 [security]
+    内容: preview.tsx の保存メタに portfolioLinks(空文字を除く)を含める
+    完了条件: (1) 送信データに portfolioLinks が含まれるユニットテスト (2) `npm run test:rules` でこの形式が許可される (3) 型・テスト緑
+
+[ ] 3-6 Web 名刺ページの Web 表示一本化 [security]
+    内容: public/link.html からアプリ起動処理と800ms待機・§3.2 の1行を削除し、即時取得・表示にする。localhost では Firestore Emulator
+          に接続。firebase.json の AASA ヘッダー設定を削除。public/index.hosting.html を public/index.html に改名(トップページを現状維持するため)
+    完了条件: (1) Hosting+Firestore Emulator で PNG / JPEG 両方の名刺が表示される(スクリーンショット。ヘッドレスブラウザは
+              リポジトリ外で一時使用) (2) 存在しない ID で「名刺が見つかりませんでした。」 (3) `sokumeishi://` がコード上0件
+              (4) 見出し・画像の見た目は現状と同じ
+
+[ ] 3-7 本番 Hosting 反映の確認(読み取りのみ)
+    ※開始前確認: manual-work W3(Hosting の本番デプロイ)完了必須
+    完了条件: (1) /c/存在しないID で「名刺が見つかりませんでした。」が表示 (2) /.well-known/apple-app-site-association が 404
+              (3) / が現在と同じ Firebase 初期ページ (4) 書き込みをしていない
+
+[ ] 3-8 言語設定の保持と templates 画面の英訳
+    内容: 選択言語の AsyncStorage 保存・起動時復元(§3.3)。templates のテンプレート名を翻訳キー化
+    完了条件: (1) 言語を English にして再起動しても English のままの画面テスト/ユニットテスト (2) 日本語表示の文言が現状と完全一致
+              (3) English でテンプレート名が Template 1〜6 (4) 型・テスト緑
+
+[ ] 3-9 front / back 画面の英訳
+    内容: §3.3 表の front / back 分を翻訳キー化
+    完了条件: (1) ja で現状と完全一致・en で表どおりの画面テスト (2) 職業の保存値が変わっていない (3) 型・テスト緑
+
+[ ] 3-10 preview 画面の英訳
+    内容: §3.3 表の preview 分(ボタン・説明・アラート)を翻訳キー化
+    完了条件: (1) ja で現状と完全一致・en で表どおりのテスト (2) 3-3 のサイズ超過文言も日英で出る (3) 型・テスト緑
+
+[ ] 3-11 名刺見出しの英訳
+    内容: TemplateSet.tsx の見出し4種を翻訳キー化(英語表示時 Skills / Frameworks / Career / Portfolio)
+    完了条件: (1) ja で現状と完全一致 (2) en で6テンプレートの表裏スクリーンショットにはみ出し・重なりがない (3) 型・テスト緑
+
+=====================================
+Phase 4: iOS 設定・プライバシー・品質
+=====================================
+
+[ ] 4-1 Info.plist と権限文言の整理
+    内容: §7.3 のとおり ATS 例外・カメラ/マイク権限を削除し、ja.lproj / en.lproj の InfoPlist.strings を Xcode プロジェクトに追加。
+          app.json(newArchEnabled: true、ios.infoPlist)を ios/ と揃える
+    完了条件: (1) Info.plist に NSAllowsArbitraryLoads・Camera・Microphone がない (2) シミュレータで写真選択・保存の権限ダイアログが
+              日本語設定で ja 文言(スクリーンショット) (3) Emulator 接続で保存が成功(通信が壊れていない) (4) ビルド成功
+
+[ ] 4-2 PrivacyInfo.xcprivacy の収集データ更新
+    内容: §7.3 の収集データ4種(App Functionality・トラッキングなし・linked)を NSPrivacyCollectedDataTypes に記載
+    完了条件: (1) plutil -lint が OK (2) 4種が記載 (3) シミュレータビルド成功
+
+[ ] 4-3 console 出力と LogBox 抑止の削除
+    内容: app/ src/ components/ の console.* と LogBox.ignoreAllLogs を削除(エラー時の動作は変えない)
+    完了条件: (1) grep で console. が0件 (2) LogBox.ignoreAllLogs が0件 (3) 型・lint・テスト緑
+
+[ ] 4-4 総合回帰確認と手動チェックリスト作成
+    内容: 全テスト実行、シミュレータでの通し確認(Emulator 接続: 作成→保存→QR→Web表示→編集→再保存で URL 不変)、
+          W4 用の手動チェックリスト(docs/manual-checklist.md)を作成
+    完了条件: (1) typecheck / lint / test / test:rules 全緑 (2) 通し確認のスクリーンショット (3) 再保存で URL が変わらない
+              (4) チェックリストが requirements の全変更点を網羅
+
+=====================================
+Phase 5: リリース
+=====================================
+
+[ ] 5-1 バージョン 1.04 への更新
+    ※開始前確認: manual-work W4(最終手動確認)完了必須
+    内容: app.json の version を 1.04、Info.plist の CFBundleShortVersionString 1.04・CFBundleVersion 12 に更新(pbxproj に
+          MARKETING_VERSION / CURRENT_PROJECT_VERSION があれば揃える)
+    完了条件: (1) 3か所の値が一致 (2) シミュレータビルド成功 (3) 型・テスト緑
