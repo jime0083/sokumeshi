@@ -29,13 +29,14 @@ Phase 1: 開発基盤とリポジトリ整理
               (4) `npx tsc --noEmit` のエラーが既存の2件以外に増えていない
     ※完了(2026-11-23): レビューPASS(削除対象の非存在・app.jsonはandroid/web削除のみ・README整合・tscエラー既存2件のみ・ios/無傷)
 
-[ ] 1-3 未使用コードの削除
+[x] 1-3 未使用コードの削除
     内容: app/qr.tsx, app/modal.tsx, src/services/dynamicLinks.ts、どこからも import されていない components/*(hello-wave,
           parallax-scroll-view, themed-text, themed-view, external-link, haptic-tab, ui/*, LanguageSwitcher)と hooks/constants の
           未使用ファイルを削除。app/_layout.tsx から実在しない Stack.Screen(scanner, card/[cardId])を削除。
           src/services/firebase.ts の Android 分岐を削除。削除前に grep で未使用を確認すること
     完了条件: (1) 削除ファイルへの参照が grep で0件 (2) `npx tsc --noEmit` のエラーが既存2件以外に増えていない
               (3) `npx expo export --platform ios` がエラーなく完了(バンドル確認) (4) 画面の見た目・遷移に変化なし(コード差分で確認)
+    ※完了(2026-11-23): レビューPASS(削除15件の参照0件・tscエラー既存2件のみ・expo export成功・画面ファイル差分0・_layoutは実在しないqr/scanner/card行のみ削除)
 
 [ ] 1-4 未使用パッケージの削除
     内容: package.json の依存のうち、app/ src/ components/ hooks/ から import されていないもの(候補: expo-sharing, expo-clipboard,

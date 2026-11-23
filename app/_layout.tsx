@@ -28,9 +28,6 @@ export default function RootLayout() {
         <Stack.Screen name="front" options={{ title: 'Front' }} />
         <Stack.Screen name="back" options={{ title: 'Back' }} />
         <Stack.Screen name="preview" options={{ title: 'Preview' }} />
-        <Stack.Screen name="qr" options={{ title: 'QR' }} />
-        <Stack.Screen name="scanner" options={{ title: 'Scan QR' }} />
-        <Stack.Screen name="card/[cardId]" options={{ title: 'Card' }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

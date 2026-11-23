@@ -17,8 +17,6 @@ const firebaseConfig = {
   messagingSenderId: "379655181547",
   appId: Platform.OS === 'ios'
     ? "1:379655181547:ios:dda30561dfcf4987379aae"  // iOS用App ID
-    : Platform.OS === 'android'
-    ? "YOUR_ANDROID_APP_ID"  // Android用App ID
     : "1:379655181547:web:66af2a6c445243b3379aae"  // Web用App ID
 };
 
