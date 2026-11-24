@@ -69,10 +69,11 @@ Phase 1: 開発基盤とリポジトリ整理
     完了条件: (1) `npm test` が通る (2) cardStore の上記3機能にテストがある (3) `npm run typecheck` エラー0
     ※完了(2026-11-24): レビューPASS(1 suite/9 tests PASS・テストが実挙動の入出力を検証・jest系はdevDependencies・typecheck 0/lint 0 errors・アプリコード無変更)
 
-[ ] 1-8 画面テスト基盤(renderRouter)導入
+[x] 1-8 画面テスト基盤(renderRouter)導入
     内容: @testing-library/react-native@13.3.3 と react-test-renderer@19.1.0 を exact で追加し、renderRouter で templates → front(氏名未入力でアラート、入力で back へ)→ back → preview
           の遷移と、戻ったときの入力値保持を確認する画面テストを書く(Firebase 呼び出しはモック)
     完了条件: (1) `npm test` が通る (2) 遷移・戻る・入力値保持・氏名未入力アラートのテストがある (3) ルーターをモックしていない
+    ※完了(2026-11-24): レビューPASS(2 suites/14 tests PASS・実ルーター使用・preview→back の入力保持テストをレビュー担当が追加・typecheck/lint 0 errors・アプリコード無変更)
 
 [x] 1-9 [検証] Firebase Emulator とルールテストの動作確認(30分)
     内容: firebase-tools 15 + Java で Firestore Emulator がプロジェクトID demo-sokumeishi で起動し、@firebase/rules-unit-testing
