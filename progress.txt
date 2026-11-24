@@ -111,13 +111,14 @@ Phase 1: 開発基盤とリポジトリ整理
 Phase 2: セキュリティ修正
 =====================================
 
-[ ] 2-1 危険なクライアント処理の削除 [security]
+[x] 2-1 危険なクライアント処理の削除 [security]
     ※2026-11-24: 1-11 より先に実施する(1-11 の開始前確認を参照)
     内容: src/services/storage.ts の「userId で自分のカードを検索して削除」「cards 全件取得してレガシー削除」処理を削除し、
           setDoc(cards/{uid}) のみにする。src/services/firebase.ts のデバッグ用 accounts:signUp 直接呼び出し・
           Google 接続テスト・認証デバッグ出力を削除
     完了条件: (1) getDocs / deleteDoc / query が storage.ts から消えている (2) 保存処理が setDoc 1回だけであるユニットテスト
               (3) identitytoolkit への fetch がコードに存在しない (4) `npm run typecheck` / `npm test` 緑
+    ※完了(2026-11-24): security指摘なし・レビューPASS(getDocs/deleteDoc/query 0件・setDoc 1回のテスト・identitytoolkit 0件・保存データの形不変・15 tests/test:rules/typecheck/lint 緑)
 
 [ ] 2-2 Firestore ルール本実装 [security]
     内容: requirements.md §4.2 のとおり firestore.rules を書き換え、Emulator テストを書く

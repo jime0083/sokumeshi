@@ -50,69 +50,13 @@ export const storage = getStorage(firebaseApp);
 console.log('[Firebase初期化] 完了');
 
 export async function ensureAnonymousAuth(): Promise<string> {
-  console.log('[認証] 現在のユーザー確認中...');
-  console.log('[認証デバッグ] auth.config:', {
-    apiKey: auth.config.apiKey?.substring(0, 20) + '...',
-    authDomain: auth.config.authDomain
-  });
-
   const existing = auth.currentUser;
   if (existing) {
-    console.log('[認証] 既存ユーザーあり:', existing.uid);
     return existing.uid;
   }
 
-  console.log('[認証] 匿名ログイン開始...');
-  console.log('[認証デバッグ] 手動 API 呼び出し開始');
-  try {
-    const manualResp = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${auth.config.apiKey}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept-Encoding': 'identity',
-        'X-Firebase-Client': 'iOS/17 react-native',
-        'X-Client-Version': 'iOS/FirebaseSDK/10.11.0'
-      },
-      body: JSON.stringify({ returnSecureToken: true })
-    });
-    const manualText = await manualResp.text();
-    console.log('[認証デバッグ] 手動 API status:', manualResp.status);
-    console.log('[認証デバッグ] 手動 API headers:', Array.from(manualResp.headers.entries()));
-    console.log('[認証デバッグ] 手動 API ボディ先頭200文字:', manualText.slice(0, 200));
-  } catch (manualError) {
-    console.error('[認証デバッグ] 手動 API 呼び出し失敗', manualError);
-  }
-
-  try {
   const cred = await signInAnonymously(auth);
-    console.log('[認証成功] 匿名ログイン完了:', cred.user.uid);
-    console.log('[認証成功] ユーザー情報:', {
-      uid: cred.user.uid,
-      isAnonymous: cred.user.isAnonymous
-    });
   return cred.user.uid;
-  } catch (error: any) {
-    console.error('[認証エラー]', error);
-    console.error('[認証エラー詳細] code:', error.code);
-    console.error('[認証エラー詳細] message:', error.message);
-
-    // customDataの詳細を確認
-    if (error.customData) {
-      console.error('[認証エラー詳細] customData.message:', error.customData.message);
-      console.error('[認証エラー詳細] customData:', JSON.stringify(error.customData, null, 2));
-    }
-
-    // ネットワークテスト
-    console.log('[認証デバッグ] ネットワーク接続テスト開始...');
-    try {
-      const response = await fetch('https://www.google.com', { method: 'HEAD' });
-      console.log('[認証デバッグ] Google接続: OK (status:', response.status, ')');
-    } catch (netError) {
-      console.error('[認証デバッグ] Google接続: 失敗', netError);
-    }
-
-    throw error;
-  }
 }
 
 
