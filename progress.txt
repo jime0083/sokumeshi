@@ -98,9 +98,13 @@ Phase 1: 開発基盤とリポジトリ整理
     ※完了(2026-11-24): security指摘1件(P-013)解消後に指摘なし・レビューPASS(test:rules緑・demo-sokumeishiのみ・hosting設定不変・emulatorsで8080/5002 listen確認・npm test 14件緑)
 
 [ ] 1-11 アプリの Emulator 接続切替 [security]
+    ※2026-11-24 変更: 開始前確認: 2-1 完了必須(2-1 前は保存時のデバッグ用 signUp fetch が本番に匿名ユーザーを作るため、
+      シミュレータで保存を押す検証ができない)。実施順は 1-10 → 2-1 → 1-11 → 2-2
     内容: src/services/firebase.ts で `__DEV__ && process.env.EXPO_PUBLIC_USE_FIREBASE_EMULATOR === '1'` のときだけ
-          connectFirestoreEmulator / connectAuthEmulator に接続する。本番ビルドでは絶対に接続しない
-    完了条件: (1) フラグ付きでシミュレータ起動し保存すると Emulator にドキュメントができ、本番に書かれない
+          connectFirestoreEmulator(127.0.0.1:8080)/ connectAuthEmulator(http://127.0.0.1:9099)に接続する。本番ビルドでは絶対に接続しない。
+          firebase.json の emulators に auth(9099)を追加し、"emulators" スクリプトを --only auth,firestore,hosting にする
+    完了条件: (1) フラグ付きでシミュレータ起動し保存すると、匿名認証と書き込みのリクエストが Emulator に届く(Emulator ログ/UI で確認。
+              2-2 前は仮ルールのため書き込みは拒否されてよい)。本番にはリクエストしない
               (2) フラグなし・本番ビルドでは接続コードが動かない(ユニットテスト) (3) `npm run typecheck` / `npm test` 緑
 
 =====================================
@@ -108,6 +112,7 @@ Phase 2: セキュリティ修正
 =====================================
 
 [ ] 2-1 危険なクライアント処理の削除 [security]
+    ※2026-11-24: 1-11 より先に実施する(1-11 の開始前確認を参照)
     内容: src/services/storage.ts の「userId で自分のカードを検索して削除」「cards 全件取得してレガシー削除」処理を削除し、
           setDoc(cards/{uid}) のみにする。src/services/firebase.ts のデバッグ用 accounts:signUp 直接呼び出し・
           Google 接続テスト・認証デバッグ出力を削除
