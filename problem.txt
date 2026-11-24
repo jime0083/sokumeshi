@@ -121,9 +121,11 @@
 
 ## P-012: package.json の reset-project スクリプトが参照切れ
 - 記録日: 2026-11-23
-- 状態: 修正中
+- 状態: 解決済み
 - 発生箇所: package.json scripts.reset-project(1-2 のレビューで発見)
 - 問題内容: 1-2 で scripts/reset-project.js を削除したため `npm run reset-project` が失敗する
 - 原因調査: package.json の scripts を確認。参照先ファイルが 1-2 で削除済み
 - 特定した原因: スクリプト定義だけが残っている
 - 切り出したタスク: 1-4(scripts 整理に reset-project 削除を追加)
+- 解決日: 2026-11-24
+- 解決内容: 1-4 で scripts から reset-project を削除。レビューで npm run 一覧が start/ios/lint のみであることを確認

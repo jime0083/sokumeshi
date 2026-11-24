@@ -38,12 +38,13 @@ Phase 1: 開発基盤とリポジトリ整理
               (3) `npx expo export --platform ios` がエラーなく完了(バンドル確認) (4) 画面の見た目・遷移に変化なし(コード差分で確認)
     ※完了(2026-11-23): レビューPASS(削除15件の参照0件・tscエラー既存2件のみ・expo export成功・画面ファイル差分0・_layoutは実在しないqr/scanner/card行のみ削除)
 
-[ ] 1-4 未使用パッケージの削除
+[x] 1-4 未使用パッケージの削除
     内容: package.json の依存のうち、app/ src/ components/ hooks/ から import されていないもの(候補: expo-sharing, expo-clipboard,
           react-native-web, react-dom, expo-web-browser, expo-symbols, @react-navigation/bottom-tabs, expo-blob, expo-haptics 等。
           grep で0件確認できたもののみ)を削除し、`pod install` を実行。package.json の web・android・reset-project スクリプトを削除(P-012)
     完了条件: (1) 削除したパッケージの import が0件 (2) `pod install` 成功 (3) `npx expo run:ios` でシミュレータにビルド・起動できる
               (4) 起動後テンプレート画面が表示される(スクリーンショット)
+    ※完了(2026-11-24): レビューPASS(12パッケージ参照0件・pod install再実行で差分不変・iPhone 15 Proでビルド成功(warningはHermes定型1件)・テンプレート画面表示を確認)
 
 [ ] 1-5 型エラー解消と typecheck / lint スクリプト追加
     内容: app/templates.tsx(overflow の型)と src/i18n/index.ts(compatibilityJSON 'v3')の型エラーを、表示を変えずに解消。
