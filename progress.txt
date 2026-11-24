@@ -83,7 +83,7 @@ Phase 1: 開発基盤とリポジトリ整理
       検証結果: firebase-tools 15.1.0 + Java 27 で起動可。@firebase/rules-unit-testing は 5.0.1 固定(6.x は firebase ^13 要求)。
       Hosting Emulator は 5000 番が macOS AirPlay と衝突 → 5002。Firestore Emulator は 8080
 
-[ ] 1-10 ルールテスト基盤導入 [security]
+[x] 1-10 ルールテスト基盤導入 [security]
     ※2026-11-23 変更: W1 を待たずに進める(ユーザー承認)。W1 の最終ラインは W2 前に変更
     内容: firestore.rules を全面拒否(`allow read, write: if false;`)の仮ルールで作成し、firebase.json に firestore.rules と
           emulators(firestore: 8080, hosting: 5002)設定を追加。@firebase/rules-unit-testing@5.0.1(exact)を追加し、"test:rules"
@@ -95,6 +95,7 @@ Phase 1: 開発基盤とリポジトリ整理
           ※この時点の firestore.rules は本番にデプロイしない(デプロイは W2 のみ)
     完了条件: (1) `npm run test:rules` が通る (2) テストが本番プロジェクトに接続しない(demo- ID)
               (3) firebase.json の既存 hosting 設定が変わっていない
+    ※完了(2026-11-24): security指摘1件(P-013)解消後に指摘なし・レビューPASS(test:rules緑・demo-sokumeishiのみ・hosting設定不変・emulatorsで8080/5002 listen確認・npm test 14件緑)
 
 [ ] 1-11 アプリの Emulator 接続切替 [security]
     内容: src/services/firebase.ts で `__DEV__ && process.env.EXPO_PUBLIC_USE_FIREBASE_EMULATOR === '1'` のときだけ

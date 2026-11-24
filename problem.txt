@@ -129,3 +129,15 @@
 - 切り出したタスク: 1-4(scripts 整理に reset-project 削除を追加)
 - 解決日: 2026-11-24
 - 解決内容: 1-4 で scripts から reset-project を削除。レビューで npm run 一覧が start/ios/lint のみであることを確認
+
+## P-013: --only なしの firebase deploy で仮ルールが本番に入るリスク
+- 記録日: 2026-11-24
+- 状態: 解決済み
+- 発生箇所: firebase.json(1-10 で firestore.rules を登録)/ manual-work.txt(1-10 のセキュリティ確認で発見)
+- 問題内容: 1-10 以前は firebase.json に firestore キーがなく、deploy で rules が更新される経路がなかった。
+  1-10 以降は --only なしの `firebase deploy` で仮ルール(全面拒否)が本番に入り、アプリ保存と Web 名刺閲覧(link.html の getDoc)が全停止しうる
+- 原因調査: firebase.json の差分と public/link.html の getDoc 呼び出しを確認(sokumeishi-security)
+- 特定した原因: 本番への誤デプロイを防ぐ明示的な警告がない(manual-work は --only 付きコマンドのみ記載だが禁止事項の明記なし)
+- 切り出したタスク: manual-work.txt 冒頭に警告追記(メインエージェント・2026-11-24 実施済み)、1-10 の差し戻しで firestore.rules コメントを具体化
+- 解決日: 2026-11-24
+- 解決内容: manual-work.txt 冒頭に警告、firestore.rules 冒頭コメントに禁止事項・影響・正しい手順を明記。sokumeishi-security 再確認で指摘なし

@@ -23,6 +23,12 @@ ios/build/
 .DS_Store
 expo-web.log
 
+# Firebase Emulator logs
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+database-debug.log
+
 # Xcode user state
 *.xcuserstate
 xcuserdata/

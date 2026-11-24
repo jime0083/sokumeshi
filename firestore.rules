@@ -1,0 +1,19 @@
+// 仮ルール(1-10): 全面拒否。これはルールテスト基盤導入のための仮実装であり、
+// アクセス権限の本実装は 2-2 で行う(2-2 完了までこの内容のまま)。
+//
+// 【重要・厳守】
+// `--only` を付けない `firebase deploy` を絶対に実行しないこと。
+// このファイルがそのまま本番(sokumeshi-58f06)に入ると、名刺の保存・
+// Web 名刺閲覧(get)が全面拒否になり、アプリ・Web ページが全停止する。
+//
+// 本番への Firestore ルール反映は、2-2 完了後に manual-work.txt の
+// Work 2(`firebase deploy --only firestore:rules --project sokumeshi-58f06`)
+// としてユーザーが実行する場合のみ許可される。Claude は firebase deploy を実行しない。
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
