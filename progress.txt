@@ -97,7 +97,7 @@ Phase 1: 開発基盤とリポジトリ整理
               (3) firebase.json の既存 hosting 設定が変わっていない
     ※完了(2026-11-24): security指摘1件(P-013)解消後に指摘なし・レビューPASS(test:rules緑・demo-sokumeishiのみ・hosting設定不変・emulatorsで8080/5002 listen確認・npm test 14件緑)
 
-[ ] 1-11 アプリの Emulator 接続切替 [security]
+[x] 1-11 アプリの Emulator 接続切替 [security]
     ※2026-11-24 変更: 開始前確認: 2-1 完了必須(2-1 前は保存時のデバッグ用 signUp fetch が本番に匿名ユーザーを作るため、
       シミュレータで保存を押す検証ができない)。実施順は 1-10 → 2-1 → 1-11 → 2-2
     内容: src/services/firebase.ts で `__DEV__ && process.env.EXPO_PUBLIC_USE_FIREBASE_EMULATOR === '1'` のときだけ
@@ -106,6 +106,7 @@ Phase 1: 開発基盤とリポジトリ整理
     完了条件: (1) フラグ付きでシミュレータ起動し保存すると、匿名認証と書き込みのリクエストが Emulator に届く(Emulator ログ/UI で確認。
               2-2 前は仮ルールのため書き込みは拒否されてよい)。本番にはリクエストしない
               (2) フラグなし・本番ビルドでは接続コードが動かない(ユニットテスト) (3) `npm run typecheck` / `npm test` 緑
+    ※完了(2026-11-25): security指摘なし・レビューPASS(シミュレータで保存まで実操作し Auth/Firestore Emulator へのリクエストを確認・本番通信なし・19 tests/test:rules/typecheck/lint 緑)
 
 =====================================
 Phase 2: セキュリティ修正

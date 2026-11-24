@@ -1,9 +1,16 @@
 import { initializeApp, getApps } from 'firebase/app';
-import { getAuth, signInAnonymously, initializeAuth, getReactNativePersistence } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import {
+  getAuth,
+  signInAnonymously,
+  initializeAuth,
+  getReactNativePersistence,
+  connectAuthEmulator,
+} from 'firebase/auth';
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { shouldUseEmulator } from './emulatorConfig';
 
 console.log('[Firebase初期化] Platform:', Platform.OS);
 
@@ -46,6 +53,11 @@ export const app = firebaseApp;
 export const auth = authInstance ?? getAuth(firebaseApp);
 export const db = getFirestore(firebaseApp);
 export const storage = getStorage(firebaseApp);
+
+if (shouldUseEmulator(__DEV__, process.env.EXPO_PUBLIC_USE_FIREBASE_EMULATOR)) {
+  connectFirestoreEmulator(db, '127.0.0.1', 8080);
+  connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
+}
 
 console.log('[Firebase初期化] 完了');
 

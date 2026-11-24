@@ -153,9 +153,10 @@ manual-work.txt(手動作業)に追加
 | コマンド | 用途 |
 |----------|------|
 | npm start | Metro 起動 |
-| npm run ios | iOS シミュレータでビルド・起動(`EXPO_PUBLIC_USE_FIREBASE_EMULATOR=1` を付けて Emulator 接続) |
-| npm run typecheck | 型チェック `tsc --noEmit`(Phase 1 で追加) |
+| npm run ios | iOS シミュレータでビルド・起動(本番接続。動作確認では使わない) |
+| npm run ios:emulator | Emulator 接続モードでシミュレータにビルド・起動(動作確認は必ずこちら。先に `npm run emulators` を起動) |
+| npm run typecheck | 型チェック `tsc --noEmit` |
 | npm run lint | `expo lint` |
-| npm test | Jest(ユニット・画面テスト)(Phase 1 で追加) |
-| npm run test:rules | Firestore Emulator 上でルールテスト(Phase 1 で追加。プロジェクトID demo-sokumeishi) |
-| npm run emulators | Firestore・Hosting Emulator 起動(Phase 1 で追加) |
+| npm test | Jest(ユニット・画面テスト) |
+| npm run test:rules | Firestore Emulator 上でルールテスト(プロジェクトID demo-sokumeishi) |
+| npm run emulators | Auth(9099)・Firestore(8080)・Hosting(5002)Emulator 起動 |
