@@ -46,10 +46,11 @@ Phase 1: 開発基盤とリポジトリ整理
               (4) 起動後テンプレート画面が表示される(スクリーンショット)
     ※完了(2026-11-24): レビューPASS(12パッケージ参照0件・pod install再実行で差分不変・iPhone 15 Proでビルド成功(warningはHermes定型1件)・テンプレート画面表示を確認)
 
-[ ] 1-5 型エラー解消と typecheck / lint スクリプト追加
+[x] 1-5 型エラー解消と typecheck / lint スクリプト追加
     内容: app/templates.tsx(overflow の型)と src/i18n/index.ts(compatibilityJSON 'v3')の型エラーを、表示を変えずに解消。
           package.json に "typecheck": "tsc --noEmit" を追加
     完了条件: (1) `npm run typecheck` エラー0 (2) `npm run lint` がエラー0(警告は可) (3) テンプレート画面・i18n の挙動に変化なし(コード差分で確認)
+    ※完了(2026-11-24): レビューPASS(typecheckエラー0・lint 0 errors/既存warning 6・差分は型注釈/compatibilityJSON削除/スクリプト追加のみ・locales に複数形キー/count/補間なしを確認)
 
 [ ] 1-6 [検証] jest-expo と expo-router/testing-library の動作確認(30分)
     内容: Expo SDK 54 / expo-router 6 / React 19.1 の組み合わせで jest-expo プリセットと renderRouter が動くか、

@@ -11,7 +11,6 @@ export function initializeI18n() {
     i18n
       .use(initReactI18next)
       .init({
-        compatibilityJSON: 'v3',
         resources: {
           ja: { translation: ja },
           en: { translation: en },

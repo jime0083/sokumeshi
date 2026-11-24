@@ -70,7 +70,7 @@ export default function TemplateSelectScreen() {
           : { width: '100%', height: 140, resizeMode: 'cover' as const };
         const wrapperStyle = isVerticalMini
           ? { backgroundColor: '#eef2f7', paddingVertical: 16, alignItems: 'center' as const }
-          : { borderRadius: 10, overflow: 'hidden' };
+          : { borderRadius: 10, overflow: 'hidden' as const };
 
           return (
         <Pressable
