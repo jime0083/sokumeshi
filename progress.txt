@@ -63,10 +63,11 @@ Phase 1: 開発基盤とリポジトリ整理
       import 不可のため src/services/{firebase,storage,saved}.ts を jest.mock する(ユニットテストでは firebase/* を jest.mock)。
       戻るは testRouter.back()。i18n は test 内で initializeI18n() + changeLanguage('ja') を明示
 
-[ ] 1-7 Jest 基盤導入と cardStore ユニットテスト
+[x] 1-7 Jest 基盤導入と cardStore ユニットテスト
     内容: 1-6 の検証結果の版で jest-expo・jest・@types/jest を devDependencies に追加し jest.config.js / jest.setup.js と "test" スクリプトを追加。
           src/store/cardStore.ts の setContact(socialLinks 導出)・setPortfolioLink・migrate のユニットテストを書く
     完了条件: (1) `npm test` が通る (2) cardStore の上記3機能にテストがある (3) `npm run typecheck` エラー0
+    ※完了(2026-11-24): レビューPASS(1 suite/9 tests PASS・テストが実挙動の入出力を検証・jest系はdevDependencies・typecheck 0/lint 0 errors・アプリコード無変更)
 
 [ ] 1-8 画面テスト基盤(renderRouter)導入
     内容: @testing-library/react-native@13.3.3 と react-test-renderer@19.1.0 を exact で追加し、renderRouter で templates → front(氏名未入力でアラート、入力で back へ)→ back → preview
