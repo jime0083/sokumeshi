@@ -150,8 +150,10 @@
 - Firebase JS SDK 12(Auth 匿名・Firestore)/ Firebase Hosting
 - ビルド: **ローカル Xcode 26 で Archive**(`ios/` が正。Info.plist 等の変更は `ios/` と `app.json` の両方を揃える)
 - New Architecture: 有効(Info.plist の現状に合わせ app.json を `newArchEnabled: true` に揃える)
-- テスト: Jest(jest-expo)、@testing-library/react-native、expo-router/testing-library(renderRouter)、
-  Firebase Emulator + @firebase/rules-unit-testing
+- テスト: Jest 29(jest-expo ~54.0.18)、@testing-library/react-native 13.3.3(14.x は expo-router 6 非対応)、
+  react-test-renderer 19.1.0、expo-router/testing-library(renderRouter)、
+  Firebase Emulator(firebase-tools 15 / Firestore 8080・Hosting 5002)+ @firebase/rules-unit-testing 5.0.1(firebase 12 対応版)。
+  ルールテストは CommonJS の .js を node 環境の Jest で実行(2026-11-24 決定。1-6・1-9 の検証結果)
 
 ## 7. 非機能要件
 ### 7.1 費用

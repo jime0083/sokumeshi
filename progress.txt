@@ -52,32 +52,44 @@ Phase 1: 開発基盤とリポジトリ整理
     完了条件: (1) `npm run typecheck` エラー0 (2) `npm run lint` がエラー0(警告は可) (3) テンプレート画面・i18n の挙動に変化なし(コード差分で確認)
     ※完了(2026-11-24): レビューPASS(typecheckエラー0・lint 0 errors/既存warning 6・差分は型注釈/compatibilityJSON削除/スクリプト追加のみ・locales に複数形キー/count/補間なしを確認)
 
-[ ] 1-6 [検証] jest-expo と expo-router/testing-library の動作確認(30分)
+[x] 1-6 [検証] jest-expo と expo-router/testing-library の動作確認(30分)
     内容: Expo SDK 54 / expo-router 6 / React 19.1 の組み合わせで jest-expo プリセットと renderRouter が動くか、
           リポジトリ外(スクラッチ)の最小構成で確かめ、必要な設定(transformIgnorePatterns、AsyncStorage・reanimated のモック等)を報告する
     完了条件: (1) 最小テスト1本が通った構成と手順の報告 (2) 制約・注意点の報告 (3) リポジトリに変更が残っていない
+    ※完了(2026-11-24): レビューPASS(スクラッチで4 suites/5 tests PASS を再実行確認・repo clean)
+      検証結果: jest-expo ~54.0.18 / jest ~29.7.0 / @types/jest 29.5.14 / @testing-library/react-native 13.3.3(14.x不可:
+      expo-router 6 の renderRouter が render を await しない)/ react-test-renderer 19.1.0(exact)。jest.config.js は
+      preset 'jest-expo' + setupFiles のみ。jest.setup.js で AsyncStorage モック・reanimated/mock。firebase SDK は jest-expo 環境で
+      import 不可のため src/services/{firebase,storage,saved}.ts を jest.mock する(ユニットテストでは firebase/* を jest.mock)。
+      戻るは testRouter.back()。i18n は test 内で initializeI18n() + changeLanguage('ja') を明示
 
 [ ] 1-7 Jest 基盤導入と cardStore ユニットテスト
-    内容: jest-expo・jest・@types/jest を devDependencies に追加し jest 設定と "test" スクリプトを追加。
+    内容: 1-6 の検証結果の版で jest-expo・jest・@types/jest を devDependencies に追加し jest.config.js / jest.setup.js と "test" スクリプトを追加。
           src/store/cardStore.ts の setContact(socialLinks 導出)・setPortfolioLink・migrate のユニットテストを書く
     完了条件: (1) `npm test` が通る (2) cardStore の上記3機能にテストがある (3) `npm run typecheck` エラー0
 
 [ ] 1-8 画面テスト基盤(renderRouter)導入
-    内容: @testing-library/react-native を追加し、renderRouter で templates → front(氏名未入力でアラート、入力で back へ)→ back → preview
+    内容: @testing-library/react-native@13.3.3 と react-test-renderer@19.1.0 を exact で追加し、renderRouter で templates → front(氏名未入力でアラート、入力で back へ)→ back → preview
           の遷移と、戻ったときの入力値保持を確認する画面テストを書く(Firebase 呼び出しはモック)
     完了条件: (1) `npm test` が通る (2) 遷移・戻る・入力値保持・氏名未入力アラートのテストがある (3) ルーターをモックしていない
 
-[ ] 1-9 [検証] Firebase Emulator とルールテストの動作確認(30分)
+[x] 1-9 [検証] Firebase Emulator とルールテストの動作確認(30分)
     内容: firebase-tools 15 + Java で Firestore Emulator がプロジェクトID demo-sokumeishi で起動し、@firebase/rules-unit-testing
           (firebase 12 と共存可能な版)でテストが動くかスクラッチで確認する
     完了条件: (1) 動いた版・手順の報告 (2) 制約の報告 (3) リポジトリに変更が残っていない
+    ※完了(2026-11-24): レビューPASS(demo-sokumeishi で Emulator 起動・rules-unit-testing 5.0.1 で assertFails 成功を再現・repo clean)
+      検証結果: firebase-tools 15.1.0 + Java 27 で起動可。@firebase/rules-unit-testing は 5.0.1 固定(6.x は firebase ^13 要求)。
+      Hosting Emulator は 5000 番が macOS AirPlay と衝突 → 5002。Firestore Emulator は 8080
 
 [ ] 1-10 ルールテスト基盤導入 [security]
     ※2026-11-23 変更: W1 を待たずに進める(ユーザー承認)。W1 の最終ラインは W2 前に変更
     内容: firestore.rules を全面拒否(`allow read, write: if false;`)の仮ルールで作成し、firebase.json に firestore.rules と
-          emulators(firestore, hosting)設定を追加。@firebase/rules-unit-testing を追加し、"test:rules"
+          emulators(firestore: 8080, hosting: 5002)設定を追加。@firebase/rules-unit-testing@5.0.1(exact)を追加し、"test:rules"
           (`firebase emulators:exec --only firestore --project demo-sokumeishi ...`)と "emulators" スクリプトを追加。
           仮ルールで未認証 get が拒否されることを確かめるテストを1本書く(本実装は 2-2)。
+          ルールテストは新規ライブラリを増やさないため CommonJS の .js(tests/rules/*.test.js)で書き、専用設定
+          jest.rules.config.js(testEnvironment: 'node'、transform: {}、testMatch は tests/rules のみ)で実行する。
+          npm test(jest-expo)の対象から tests/rules を除外する(ts-jest は導入しない。2026-11-24 決定)
           ※この時点の firestore.rules は本番にデプロイしない(デプロイは W2 のみ)
     完了条件: (1) `npm run test:rules` が通る (2) テストが本番プロジェクトに接続しない(demo- ID)
               (3) firebase.json の既存 hosting 設定が変わっていない
