@@ -1,17 +1,74 @@
-// 仮ルール(1-10): 全面拒否。これはルールテスト基盤導入のための仮実装であり、
-// アクセス権限の本実装は 2-2 で行う(2-2 完了までこの内容のまま)。
+// Firestore ルール本実装(2-2)。requirements.md §4.1 / §4.2 のとおり。
 //
 // 【重要・厳守】
 // `--only` を付けない `firebase deploy` を絶対に実行しないこと。
-// このファイルがそのまま本番(sokumeshi-58f06)に入ると、名刺の保存・
-// Web 名刺閲覧(get)が全面拒否になり、アプリ・Web ページが全停止する。
-//
-// 本番への Firestore ルール反映は、2-2 完了後に manual-work.txt の
+// このファイルを本番(sokumeshi-58f06)へ反映するのは manual-work.txt の
 // Work 2(`firebase deploy --only firestore:rules --project sokumeshi-58f06`)
-// としてユーザーが実行する場合のみ許可される。Claude は firebase deploy を実行しない。
+// としてユーザーが実行する場合のみ。Claude は firebase deploy を実行しない。
+//
+// cards/{cardId}(cardId = 匿名認証 uid。1ユーザー1枚):
+//   - get: 誰でも可(受取者が Web で閲覧するため。cardId は推測困難な uid)
+//   - list: 全面禁止
+//   - create / update: 本人(auth.uid == cardId)のみ。userId/cardId の偽装不可。
+//     許可キー以外のフィールドを含まない。必須キーが揃っている。orientation は
+//     'vertical' / 'horizontal' のいずれか
+//   - delete: 本人(auth.uid == cardId)のみ
+// cards 以外のパス: 全面禁止(W1 で他コレクションの存在を確認済み。cards のみ)
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    match /cards/{cardId} {
+      function allowedKeys() {
+        return [
+          'userId', 'cardId', 'cardName', 'templateId', 'orientation',
+          'frontImageUrl', 'backImageUrl', 'shortUrl', 'qrCodeData',
+          'personalInfo', 'socialLinks', 'techStack', 'careerPortfolio',
+          'portfolioLinks', 'createdAt', 'updatedAt'
+        ];
+      }
+
+      function requiredKeys() {
+        return [
+          'userId', 'cardId', 'templateId', 'orientation',
+          'frontImageUrl', 'backImageUrl', 'shortUrl', 'qrCodeData',
+          'personalInfo', 'socialLinks', 'techStack', 'createdAt', 'updatedAt'
+        ];
+      }
+
+      function isOwner() {
+        return request.auth != null && request.auth.uid == cardId;
+      }
+
+      function hasValidOwnership() {
+        return request.resource.data.userId == request.auth.uid
+          && request.resource.data.cardId == cardId;
+      }
+
+      function hasValidSchema() {
+        return request.resource.data.keys().hasOnly(allowedKeys())
+          && request.resource.data.keys().hasAll(requiredKeys())
+          && request.resource.data.orientation in ['vertical', 'horizontal']
+          && request.resource.data.userId is string
+          && request.resource.data.cardId is string
+          && request.resource.data.templateId is string
+          && request.resource.data.frontImageUrl is string
+          && request.resource.data.backImageUrl is string
+          && request.resource.data.shortUrl is string
+          && request.resource.data.qrCodeData is string
+          && request.resource.data.personalInfo is map
+          && request.resource.data.socialLinks is map
+          && request.resource.data.techStack is map
+          && request.resource.data.createdAt is timestamp
+          && request.resource.data.updatedAt is timestamp;
+      }
+
+      allow get: if true;
+      allow list: if false;
+      allow create: if isOwner() && hasValidOwnership() && hasValidSchema();
+      allow update: if isOwner() && hasValidOwnership() && hasValidSchema();
+      allow delete: if isOwner();
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }
