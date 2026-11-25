@@ -45,6 +45,8 @@ Work 2: Firestore ルールの本番デプロイ
 Work 3: Hosting の本番デプロイ
 =====================================
 [ ] 状態: 未着手
+※ 2026-11-25 ユーザー指示: W3 は Claude が任意のタイミング(3-6 の review PASS 後)で実行してよい。
+  実行するのは `firebase deploy --only hosting --project sokumeshi-58f06` のみ。実行後に manual-work と 3-7 で記録・確認する
 内容:
   1. `firebase deploy --only hosting --project sokumeshi-58f06` を実行する
   2. 完了したら Claude に「W3 完了」と伝える
