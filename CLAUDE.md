@@ -113,7 +113,8 @@ manual-work.txt(手動作業)に追加
 - サーバー専用の秘密情報をクライアントに公開される設定(`EXPO_PUBLIC_` 付き環境変数等)に置かない
 - テストは本番データを汚さない環境(Firebase Emulator、プロジェクトID `demo-sokumeishi`)で実行する
 - アプリをシミュレータで動作確認するときは Emulator 接続モード(`EXPO_PUBLIC_USE_FIREBASE_EMULATOR=1`)で起動し、本番 Firestore に書き込まない
-- **本番への `firebase deploy` は Claude が実行しない**(manual-work でユーザーが実行する)
+- **本番への `firebase deploy` は原則 Claude が実行しない**(manual-work でユーザーが実行する)。例外はユーザーが明示的に許可した
+  W2・W3(2026-11-25 許可)で、manual-work に書かれた `--only` 付きのコマンドだけを実行し、結果を manual-work に記録する
 - 本番環境での確認は読み取りのみ(ログイン・書き込み・削除をしない)
 - 検証用の一時ファイルはリポジトリ内(テスト・型チェックの対象範囲)に置かない。終了後に削除する
 - テストは他のテストと共有するデータを書き換えない。作ったデータは失敗時も必ず後片付けする
