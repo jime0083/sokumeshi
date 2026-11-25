@@ -136,10 +136,11 @@ Phase 2: セキュリティ修正
 Phase 3: 不具合修正
 =====================================
 
-[ ] 3-1 認証復元待ち [security]
+[x] 3-1 認証復元待ち [security]
     内容: ensureAnonymousAuth で `await auth.authStateReady()` の後に currentUser を確認し、なければ signInAnonymously する
     完了条件: (1) 復元済みユーザーがいる場合に新規作成しないユニットテスト (2) いない場合に1回だけ作成するユニットテスト
               (3) `npm run typecheck` / `npm test` 緑
+    ※完了(2026-11-25): security指摘なし・レビューPASS(authStateReady前にcurrentUserを読まないことをgetterトラップで検証・signIn経路1箇所・23 tests/typecheck/lint 緑)
 
 [ ] 3-2 [検証] JPEG キャプチャのサイズ計測(30分)
     内容: Emulator 接続のシミュレータ(iPhone 15 Pro Max)で6テンプレート×プロフィール写真ありの表裏を JPEG でキャプチャし、

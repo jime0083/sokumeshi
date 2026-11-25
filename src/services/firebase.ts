@@ -11,6 +11,7 @@ import { getStorage } from 'firebase/storage';
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { shouldUseEmulator } from './emulatorConfig';
+import { resolveAnonymousUid } from './authFlow';
 
 console.log('[Firebase初期化] Platform:', Platform.OS);
 
@@ -62,13 +63,7 @@ if (shouldUseEmulator(__DEV__, process.env.EXPO_PUBLIC_USE_FIREBASE_EMULATOR)) {
 console.log('[Firebase初期化] 完了');
 
 export async function ensureAnonymousAuth(): Promise<string> {
-  const existing = auth.currentUser;
-  if (existing) {
-    return existing.uid;
-  }
-
-  const cred = await signInAnonymously(auth);
-  return cred.user.uid;
+  return resolveAnonymousUid(auth, () => signInAnonymously(auth));
 }
 
 
