@@ -127,10 +127,11 @@ Phase 2: セキュリティ修正
               (4) v1.03 形式(PNG data URL、profileImage あり、portfolioLinks なし)の本人書き込みが許可 (5) `npm run test:rules` 緑
     ※完了(2026-11-25): security指摘なし(v1.03実送信形式・レガシー名刺get・merge注入拒否をスクラッチで追加検証)・レビューPASS(22 rules tests・merge注入拒否を再確認・19 tests/typecheck/lint 緑)
 
-[ ] 2-3 本番ルール反映の確認(読み取りのみ)
+[x] 2-3 本番ルール反映の確認(読み取りのみ)
     ※開始前確認: manual-work W2(Firestore ルールの本番デプロイ)完了必須
     内容: 本番に対し未認証で (a) cards 一覧取得 (b) 存在しない cardId の get を REST で実行する(読み取りのみ)
     完了条件: (1) (a) が 403 (2) (b) が 404(=get は許可されている) (3) 書き込み・削除をしていない
+    ※完了(2026-11-25): レビューPASS(未認証list=403・存在しないget=404・既存名刺get=200・Web名刺ページ=200・GETのみ)
 
 =====================================
 Phase 3: 不具合修正
