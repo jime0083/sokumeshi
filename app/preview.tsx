@@ -39,6 +39,88 @@ export default function PreviewScreen() {
     })();
   }, []);
 
+  // TEMP[3-2 measurement]: サイズ計測用。計測後に削除する。
+  const [measuring, setMeasuring] = useState(false);
+  const runSizeMeasurement = async () => {
+    setMeasuring(true);
+    try {
+      const store = useCardStore.getState();
+      store.setPersonalInfo({
+        nameJa: '栗田孟太郎田中山田鈴木佐藤',
+        nameEn: 'Taro Kuritayamadasuzukisato Example Long',
+        jobTitle: 'Individual Developer',
+      });
+      store.setContact(0, { service: 'twitter', url: 'https://twitter.com/example_very_long_username_1234567890' });
+      store.setContact(1, { service: 'instagram', url: 'https://instagram.com/example_very_long_username_1234567890' });
+      store.setContact(2, { service: 'github', url: 'https://github.com/example_very_long_username_1234567890' });
+      store.setContact(3, { service: 'youtube', url: 'https://youtube.com/@example_very_long_channel_name_1234567890' });
+      store.setTechStack({
+        languages: ['JavaScript', 'TypeScript', 'Python', 'Go', 'Rust', 'Swift', 'Kotlin', 'Ruby', 'PHP', 'C++'],
+        frameworks: ['React', 'React Native', 'Next.js', 'Django', 'Flask', 'Express', 'Vue', 'Nuxt', 'Rails', 'Spring'],
+      });
+      store.setCareerPortfolio(
+        '123456789012345678901234567890\n123456789012345678901234567890\n123456789012345678901234567890'
+      );
+      store.setPortfolioLink(0, 'https://example.com/portfolio/very-long-path-1234567890');
+      store.setPortfolioLink(1, 'https://example.com/portfolio/very-long-path-abcdefghij');
+
+      await new Promise((r) => setTimeout(r, 300));
+
+      const templates: { id: string; orientation: 'vertical' | 'horizontal' }[] = [
+        { id: 'template_01', orientation: 'vertical' },
+        { id: 'template_02', orientation: 'vertical' },
+        { id: 'template_03', orientation: 'vertical' },
+        { id: 'template_04', orientation: 'horizontal' },
+        { id: 'template_05', orientation: 'horizontal' },
+        { id: 'template_06', orientation: 'horizontal' },
+      ];
+
+      for (const tpl of templates) {
+        store.setTemplate(tpl.id, tpl.orientation);
+        await new Promise((r) => setTimeout(r, 500));
+        const width2x = tpl.orientation === 'vertical' ? 686 : 626;
+        const width1x = tpl.orientation === 'vertical' ? 343 : 313;
+        const cfgs: { label: string; format: 'png' | 'jpg'; quality: number; width?: number }[] = [
+          { label: 'png-q1-native', format: 'png', quality: 1 },
+          { label: 'jpg-q0.9-native', format: 'jpg', quality: 0.9 },
+          { label: 'jpg-q0.8-native', format: 'jpg', quality: 0.8 },
+          { label: 'jpg-q0.7-native', format: 'jpg', quality: 0.7 },
+          { label: 'jpg-q0.6-native', format: 'jpg', quality: 0.6 },
+          { label: 'jpg-q0.8-2x', format: 'jpg', quality: 0.8, width: width2x },
+          { label: 'jpg-q0.7-2x', format: 'jpg', quality: 0.7, width: width2x },
+          { label: 'jpg-q0.8-1x', format: 'jpg', quality: 0.8, width: width1x },
+        ];
+        for (const cfg of cfgs) {
+          const opts: any = { result: 'base64', format: cfg.format, quality: cfg.quality };
+          if (cfg.width) opts.width = cfg.width;
+          const f = await (frontRef.current as any)?.capture?.(opts);
+          const b = await (backRef.current as any)?.capture?.(opts);
+          const fLen = f?.length ?? 0;
+          const bLen = b?.length ?? 0;
+          console.log(`MEASURE|${tpl.id}|${cfg.label}|front=${fLen}|back=${bLen}|total=${fLen + bLen}`);
+          // 画質確認用に一部の組み合わせを保存する
+          if (
+            (tpl.id === 'template_01' || tpl.id === 'template_04') &&
+            (cfg.label === 'jpg-q0.7-native' || cfg.label === 'jpg-q0.8-2x' || cfg.label === 'jpg-q0.6-native')
+          ) {
+            if (f) {
+              const p = `${FileSystem.documentDirectory}measure_${tpl.id}_${cfg.label}_front.jpg`;
+              await FileSystem.writeAsStringAsync(p, f, { encoding: 'base64' });
+            }
+            if (b) {
+              const p = `${FileSystem.documentDirectory}measure_${tpl.id}_${cfg.label}_back.jpg`;
+              await FileSystem.writeAsStringAsync(p, b, { encoding: 'base64' });
+            }
+          }
+        }
+      }
+      console.log('MEASURE|DONE');
+      Alert.alert('計測完了', 'ログを確認してください');
+    } finally {
+      setMeasuring(false);
+    }
+  };
+
   const onSaveFirebase = async () => {
     if (!draft.templateId || !draft.orientation) {
       Alert.alert('エラー', 'テンプレートが選択されていません');
@@ -222,6 +304,11 @@ export default function PreviewScreen() {
           <CardPreview side="back" />
         </View>
       </ViewShot>
+
+      {/* TEMP[3-2 measurement] */}
+      <Pressable onPress={runSizeMeasurement} disabled={measuring} style={{ marginTop: 12, backgroundColor: '#ff6f00', padding: 14, borderRadius: 10 }}>
+        <Text style={{ textAlign: 'center', color: '#fff' }}>{measuring ? '計測中...' : '[TEMP] サイズ計測実行'}</Text>
+      </Pressable>
 
       {/* 保存ボタンの順番：上にFirebase保存（→QR生成）、下にスマホ保存 */}
       <Pressable onPress={onSaveFirebase} disabled={saving} style={{ marginTop: 24, backgroundColor: '#43a047', padding: 14, borderRadius: 10 }}>

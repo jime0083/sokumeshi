@@ -137,9 +137,9 @@
 ## 5. 外部サービス・API
 | サービス | 用途 | 料金(確認日・出典) | 制約 | 秘密情報 |
 |---|---|---|---|---|
-| Firebase Authentication(匿名) | uid 発行 | Spark(無料)継続 | — | なし(Firebase の Web API キーは秘密情報ではない) |
-| Cloud Firestore | 名刺データ・画像 | Spark(無料)継続 | 1ドキュメント最大 1MiB | — |
-| Firebase Hosting | Web 名刺ページ | Spark(無料)継続 | — | — |
+| Firebase Authentication(匿名) | uid 発行 | 現行の Blaze プランのまま(2026-11-25 確認) | — | なし(Firebase の Web API キーは秘密情報ではない) |
+| Cloud Firestore | 名刺データ・画像 | 現行の Blaze プランのまま | 1ドキュメント最大 1MiB | — |
+| Firebase Hosting | Web 名刺ページ | 現行の Blaze プランのまま | — | — |
 | App Store | 配布 | — | 2026-04-28 以降は Xcode 26 / iOS 26 SDK でのビルドが必須(確認日 2026-11-23、[Apple](https://developer.apple.com/news/upcoming-requirements/?id=04282026a))。Expo SDK 54 は Xcode 26 に対応([Expo](https://expo.dev/changelog/sdk-54)) | — |
 
 - Firebase Storage へは移行しない(2026-11-23 決定)
@@ -157,7 +157,7 @@
 
 ## 7. 非機能要件
 ### 7.1 費用
-- 追加費用なし(Firebase Spark プランのまま)
+- 追加費用なし(Firebase の現行プランのまま。2026-11-25 W1 で現行プランが Blaze(従量制)であることを確認。今回の改修で使う機能・量は増やさない)
 
 ### 7.2 セキュリティ
 - §4.2 のルールをリポジトリで管理し、Emulator テストで検証する

@@ -14,7 +14,10 @@
 =====================================
 Work 1: 現在の本番 Firestore ルールとコレクション一覧の共有
 =====================================
-[ ] 状態: 未着手
+[x] 状態: 完了(2026-11-25)
+結果: ルートのコレクションは cards のみ。現行ルールは cards の read を全許可(list 含む)、write は
+      `request.auth.uid == request.resource.data.userId` のみ(cardId と未照合)。プロジェクトは Blaze(従量制)プラン。
+      → firestore.rules(2-2)の修正は不要。W2 に進める
 内容:
   1. Firebase コンソールでプロジェクト sokumeshi-58f06 を開き、Firestore Database の「ルール」タブの内容を全文コピーする
   2. 同じく「データ」タブで、ルート直下のコレクション名をすべて確認する(cards 以外があるか)

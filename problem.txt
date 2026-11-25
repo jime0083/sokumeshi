@@ -46,6 +46,9 @@
   1. 未認証で GET https://firestore.googleapis.com/v1/projects/sokumeshi-58f06/databases/(default)/documents/cards?pageSize=1 → 200
 - 原因調査: リポジトリに firestore.rules がなく、本番ルールが list を許可している(REST で 200 を確認。取得は1件・1項目に限定)
 - 特定した原因: 本番ルールが cards の list を未認証で許可している
+- 追加調査(2026-11-25・W1 で現行ルール全文を確認): `allow read: if true;` で list も許可。さらに write が
+  `request.auth.uid == request.resource.data.userId` だけで cardId(ドキュメントID)と照合していないため、
+  匿名ログインした誰でも userId を自分にすれば**他人の名刺を上書きできる**状態。2-2 のルール(auth.uid == cardId 必須)で両方とも解消する
 - 切り出したタスク: W1, 1-10, 2-2, W2, 2-3
 
 ## P-002: 保存時に他人の名刺を全件取得・削除しうる
