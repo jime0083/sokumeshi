@@ -170,8 +170,9 @@
 - 権限文言(InfoPlist.strings で日英):
   - NSPhotoLibraryUsageDescription: ja「名刺に載せるプロフィール写真を選ぶために写真ライブラリにアクセスします。」/ en「Used to choose a profile photo for your business card.」
   - NSPhotoLibraryAddUsageDescription: ja「作成した名刺画像を写真ライブラリに保存するために使用します。」/ en「Used to save your business card images to your photo library.」
-- PrivacyInfo.xcprivacy の収集データを実態に合わせる: 氏名(Name)、写真(Photos or Videos。名刺画像に含まれる)、
-  その他のユーザーコンテンツ(Other User Content)、ユーザー ID(User ID。匿名 uid)。いずれも用途 App Functionality、トラッキングなし
+- PrivacyInfo.xcprivacy の収集データを実態に合わせる: 氏名(Name)、メールアドレス(Email Address。連絡先欄で Mail を選んだ場合。2026-11-25 追加決定)、
+  写真(Photos or Videos。名刺画像に含まれる)、その他のユーザーコンテンツ(Other User Content)、ユーザー ID(User ID。匿名 uid)。
+  いずれも用途 App Functionality、ユーザーに紐付く、トラッキングなし
 - app.json から android / web 設定を削除
 
 ### 7.4 対応端末
