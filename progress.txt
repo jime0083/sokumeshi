@@ -150,11 +150,12 @@ Phase 3: 不具合修正
     ※完了後、メインエージェントが決定値を requirements.md §4.3 に追記する
     ※完了(2026-11-25): レビューPASS(計測ログで最悪ケース=テンプレート1・jpg q0.8 native 575,412 を確認・画質目視OK・.capture の引数無視をソースで確認・repo clean)。§4.3 に決定値を追記済み
 
-[ ] 3-3 アップロード画像の JPEG 化とサイズガード [security]
+[x] 3-3 アップロード画像の JPEG 化とサイズガード [security]
     内容: preview.tsx の保存(Firebase)用キャプチャを §4.3 の決定値(jpg / quality 0.8 / 幅指定なし)の JPEG にし、captureRef(ref, 明示オプション)で撮る(.capture() は引数を無視するため)。storage.ts で data:image/jpeg を組み立てる。
           表裏合計 900,000 文字超ならアップロードせずエラー(§3.3 文言)。カメラロール保存は PNG のまま
     完了条件: (1) サイズガードのユニットテスト (2) Emulator 接続で6テンプレートとも保存成功 (3) カメラロール保存が PNG のまま
               (4) 画面の見た目に変化なし (5) `npm run typecheck` / `npm test` 緑
+    ※完了(2026-11-26): security指摘なし・レビューFAIL1回(超過アラートに前置きが付く→ユーザー決定で文言のみ表示に修正)後PASS(テンプレート1・4をEmulatorで保存しJPEG確認・カメラロールPNG確認・33 tests/22 rules tests/typecheck/lint 緑)
 
 [ ] 3-4 プロフィール写真の永続化 [security]
     内容: §4.3 のとおり選択時に documentDirectory/profile/ へコピーし相対ファイル名を保存、表示時に解決。起動時の既存パス移行。

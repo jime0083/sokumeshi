@@ -1,29 +1,23 @@
 import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { db, ensureAnonymousAuth } from './firebase';
 import { CardMeta } from '@/src/types/card';
-
-function sanitizeBase64(input: string): string {
-  // data URL のプレフィックスを削除
-  let s = input.replace(/^data:image\/\w+;base64,/, '');
-  // 改行など base64 以外の文字を除去
-  s = s.replace(/[^A-Za-z0-9+/=]/g, '');
-  return s;
-}
+import { buildImageDataUrls } from './cardImage';
 
 export async function saveCardImagesAndMeta(params: {
   frontBase64: string;
   backBase64: string;
   meta: Omit<CardMeta, 'frontImageUrl' | 'backImageUrl' | 'createdAt' | 'updatedAt' | 'userId'>;
 }): Promise<CardMeta> {
+  // Firebase Storage を経由せず、画像データURL(JPEG)をそのまま Firestore に保存する。
+  // サイズガード(900,000文字超)はここで setDoc 前に必ず通過する。
+  const { frontImageUrl: frontUrl, backImageUrl: backUrl } = buildImageDataUrls(
+    params.frontBase64,
+    params.backBase64
+  );
+
   const uid = await ensureAnonymousAuth();
   // 1ユーザーにつき1枚のみ保存できるよう、cardId は常に uid を使用する
   const cardId = uid;
-
-  // Firebase Storage を経由せず、画像データURLをそのまま Firestore に保存する
-  const cleanedFront = sanitizeBase64(params.frontBase64);
-  const cleanedBack = sanitizeBase64(params.backBase64);
-  const frontUrl = `data:image/png;base64,${cleanedFront}`;
-  const backUrl = `data:image/png;base64,${cleanedBack}`;
 
   const meta: CardMeta = {
     ...params.meta,

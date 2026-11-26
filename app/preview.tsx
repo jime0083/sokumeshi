@@ -1,6 +1,6 @@
 import { View, Text, Pressable, Alert, ScrollView } from 'react-native';
 import { useRef, useState, useEffect } from 'react';
-import ViewShot from 'react-native-view-shot';
+import ViewShot, { captureRef } from 'react-native-view-shot';
 import QRCode from 'react-native-qrcode-svg';
 import * as MediaLibrary from 'expo-media-library';
 import * as FileSystem from 'expo-file-system/legacy';
@@ -9,6 +9,7 @@ import { useRouter } from 'expo-router';
 import CardPreview from '@/components/CardPreview';
 import { useCardStore } from '@/src/store/cardStore';
 import { saveCardImagesAndMeta } from '@/src/services/storage';
+import { ImageTooLargeError, IMAGE_TOO_LARGE_MESSAGE } from '@/src/services/cardImage';
 // Dynamic Links 非推奨のため、Firebase Hosting のURLを直接QR化します
 import { ensureAnonymousAuth } from '@/src/services/firebase';
 import { setSavedCardMeta, getSavedCardMeta } from '@/src/services/saved';
@@ -50,8 +51,10 @@ export default function PreviewScreen() {
       
       // ViewShot returns pure base64 (without data url prefix).
       // The uploader side converts it to data URL safely, so base64 here is OK.
-      const frontBase64 = await (frontRef.current as any)?.capture?.({ result: 'base64' });
-      const backBase64 = await (backRef.current as any)?.capture?.({ result: 'base64' });
+      // ViewShot インスタンスの .capture() は引数を無視するため、モジュール関数 captureRef に
+      // 明示オプションを渡して JPEG(§4.3 決定値)でキャプチャする。
+      const frontBase64 = await captureRef(frontRef, { format: 'jpg', quality: 0.8, result: 'base64' });
+      const backBase64 = await captureRef(backRef, { format: 'jpg', quality: 0.8, result: 'base64' });
       
       if (!frontBase64 || !backBase64) {
         console.error('[エラー] キャプチャ失敗');
@@ -99,7 +102,11 @@ export default function PreviewScreen() {
       console.error('[エラー詳細] name:', e.name);
       console.error('[エラー詳細] message:', e.message);
       console.error('[エラー詳細] stack:', e.stack);
-      Alert.alert('エラー', `Firebase: Error (${e.code || e.name}).\n${e.message}`);
+      if (e instanceof ImageTooLargeError) {
+        Alert.alert('エラー', IMAGE_TOO_LARGE_MESSAGE);
+      } else {
+        Alert.alert('エラー', `Firebase: Error (${e.code || e.name}).\n${e.message}`);
+      }
     } finally {
       setSaving(false);
     }
@@ -113,13 +120,13 @@ export default function PreviewScreen() {
         return;
       }
 
-      // 表・裏を base64 PNG としてキャプチャ
-      const frontBase64 = await (frontRef.current as any)?.capture?.({
+      // 表・裏を base64 PNG としてキャプチャ(モジュール関数 captureRef に明示オプションを渡す)
+      const frontBase64 = await captureRef(frontRef, {
         result: 'base64',
         format: 'png',
         quality: 1,
       });
-      const backBase64 = await (backRef.current as any)?.capture?.({
+      const backBase64 = await captureRef(backRef, {
         result: 'base64',
         format: 'png',
         quality: 1,
