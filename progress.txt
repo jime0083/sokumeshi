@@ -164,9 +164,10 @@ Phase 3: 不具合修正
               (3) 送信データに profileImage がないユニットテスト (4) `npm run typecheck` / `npm test` 緑
     ※完了(2026-11-26): security指摘なし・レビューPASS(シミュレータで写真選択→完全再起動後も表示・persistは相対パス・旧ファイル削除を確認・51 tests/22 rules/typecheck/lint 緑)。旧データ移行の実機確認は W4 チェックリストに含める
 
-[ ] 3-5 ポートフォリオ URL の保存漏れ修正 [security]
+[x] 3-5 ポートフォリオ URL の保存漏れ修正 [security]
     内容: preview.tsx の保存メタに portfolioLinks(空文字を除く)を含める
     完了条件: (1) 送信データに portfolioLinks が含まれるユニットテスト (2) `npm run test:rules` でこの形式が許可される (3) 型・テスト緑
+    ※完了(2026-11-26): security指摘なし・レビューPASS(実ルーターで back 入力→保存し portfolioLinks=['URL']/両方空で[] を確認・v1.04 ルールテストで許可・54 tests/22 rules/typecheck/lint 緑)
 
 [ ] 3-6 Web 名刺ページの Web 表示一本化 [security]
     内容: public/link.html からアプリ起動処理と800ms待機・§3.2 の1行を削除し、即時取得・表示にする。localhost では Firestore Emulator

@@ -55,6 +55,28 @@ describe('saveCardImagesAndMeta', () => {
     expect(query).not.toHaveBeenCalled();
   });
 
+  it('passes portfolioLinks through to the data sent with setDoc', async () => {
+    await saveCardImagesAndMeta({
+      frontBase64: 'ZnJvbnQ=',
+      backBase64: 'YmFjaw==',
+      meta: {
+        cardId: 'test-uid',
+        templateId: 'template_01',
+        orientation: 'vertical',
+        cardName: 'My Card',
+        shortUrl: 'https://sokumeshi-58f06.web.app/c/test-uid',
+        qrCodeData: 'https://sokumeshi-58f06.web.app/c/test-uid',
+        personalInfo: { nameJa: '山田太郎', nameEn: 'Taro Yamada' },
+        socialLinks: {},
+        techStack: { languages: [], frameworks: [] },
+        portfolioLinks: ['https://portfolio.example.com'],
+      },
+    });
+
+    const savedData = (setDoc as jest.Mock).mock.calls[0][1];
+    expect(savedData.portfolioLinks).toEqual(['https://portfolio.example.com']);
+  });
+
   it('does not call setDoc or sign in when the combined base64 length exceeds MAX_TOTAL_BASE64', async () => {
     const frontLength = Math.floor(MAX_TOTAL_BASE64 / 2);
     const backLength = MAX_TOTAL_BASE64 - frontLength + 1;

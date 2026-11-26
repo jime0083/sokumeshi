@@ -90,6 +90,7 @@ export default function PreviewScreen() {
           socialLinks: draft.socialLinks,
           techStack: draft.techStack,
           careerPortfolio: draft.careerPortfolio,
+          portfolioLinks: (draft.portfolioLinks || []).filter((url) => url.trim() !== ''),
         },
       });
       console.log('[アップロード成功] メタデータ:', saved);
