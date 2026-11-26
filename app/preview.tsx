@@ -85,7 +85,8 @@ export default function PreviewScreen() {
           cardName: 'My Card',
           shortUrl: short,
           qrCodeData: short,
-          personalInfo: draft.personalInfo,
+          // profileImage は端末内パス(相対)のため送信しない(requirements.md §4.1)
+          personalInfo: { nameJa: draft.personalInfo.nameJa, nameEn: draft.personalInfo.nameEn, jobTitle: draft.personalInfo.jobTitle },
           socialLinks: draft.socialLinks,
           techStack: draft.techStack,
           careerPortfolio: draft.careerPortfolio,

@@ -1,7 +1,9 @@
 import { View, Text, Image, StyleSheet, ImageBackground } from 'react-native';
+import * as FileSystem from 'expo-file-system/legacy';
 import { CardContainer } from './common';
 import { Orientation, PersonalInfo, SocialLinks, TechStack, ContactEntry } from '@/src/types/card';
 import { SOCIAL_ICON } from '@/src/assets/socialIcons';
+import { resolveProfileImageUri } from '@/src/services/profileImage';
 import QRCode from 'react-native-qrcode-svg';
 
 type Props = {
@@ -32,12 +34,13 @@ export function BackTemplate(props: Props & { careerPortfolio?: string; portfoli
 function Front1({ orientation, personalInfo, socialLinks, contacts, templateId }: Props) {
   const id = templateIdFromIdStr(templateId);
   const frontBg = getFrontBackgroundByTemplateId(id);
+  const profileImageUri = resolveProfileImageUri(personalInfo.profileImage, FileSystem.documentDirectory);
   return (
     <CardContainer orientation={orientation}>
       <ImageBackground source={frontBg} style={{ flex: 1 }} resizeMode="cover">
         <View style={{ alignItems: 'center', marginTop: 80 }}>
-          {personalInfo.profileImage ? (
-            <Image source={{ uri: personalInfo.profileImage }} style={styles.avatar} />
+          {profileImageUri ? (
+            <Image source={{ uri: profileImageUri }} style={styles.avatar} />
           ) : (
             <View style={[styles.avatar, { backgroundColor: '#ddd' }]} />
           )}
@@ -112,14 +115,15 @@ function FrontH({ orientation, personalInfo, socialLinks, templateId }: Props) {
   const tId = templateIdFromIdStr(templateId);
   const frontBg = getFrontBackgroundByTemplateId(tId);
   const isT5 = tId === 5;
+  const profileImageUri = resolveProfileImageUri(personalInfo.profileImage, FileSystem.documentDirectory);
   return (
     <CardContainer orientation={orientation}>
       <ImageBackground source={frontBg} style={{ flex: 1 }} resizeMode="cover">
         <View style={{ flex: 1, flexDirection: 'row', paddingHorizontal: 16, paddingTop: 16, transform: [{ translateX: -10 }] }}>
           {/* Left: avatar + names */}
           <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'center', paddingTop: 30 }}>
-            {personalInfo.profileImage ? (
-              <Image source={{ uri: personalInfo.profileImage }} style={{ width: 40, height: 40, borderRadius: 20, borderWidth: 2, borderColor: '#fff' }} />
+            {profileImageUri ? (
+              <Image source={{ uri: profileImageUri }} style={{ width: 40, height: 40, borderRadius: 20, borderWidth: 2, borderColor: '#fff' }} />
             ) : (
               <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: '#ddd' }} />
             )}

@@ -1,10 +1,12 @@
 import { View, Text, TextInput, Pressable, Image, Modal, Alert, ScrollView } from 'react-native';
 import { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system/legacy';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import { useCardStore } from '@/src/store/cardStore';
 import { ContactEntry, ContactService } from '@/src/types/card';
+import { copyImageToProfileDirectory, resolveProfileImageUri } from '@/src/services/profileImage';
 
 const SERVICE_OPTIONS: { key: ContactService; label: string }[] = [
   { key: 'twitter', label: 'X (Twitter)' },
@@ -25,7 +27,14 @@ export default function FrontFormScreen() {
   const pickImage = async () => {
     const res = await ImagePicker.launchImageLibraryAsync({ quality: 0.9, base64: false });
     if (!res.canceled) {
-      setPersonalInfo({ profileImage: res.assets[0].uri });
+      const documentDirectory = FileSystem.documentDirectory;
+      if (!documentDirectory) return;
+      const relativePath = await copyImageToProfileDirectory({
+        sourceUri: res.assets[0].uri,
+        documentDirectory,
+        previousValue: draft.personalInfo.profileImage,
+      });
+      setPersonalInfo({ profileImage: relativePath });
     }
   };
 
@@ -39,7 +48,10 @@ export default function FrontFormScreen() {
 
       <Pressable onPress={pickImage} style={{ marginTop: 12, alignItems: 'center' }}>
         {draft.personalInfo.profileImage ? (
-          <Image source={{ uri: draft.personalInfo.profileImage }} style={{ width: 96, height: 96, borderRadius: 48 }} />
+          <Image
+            source={{ uri: resolveProfileImageUri(draft.personalInfo.profileImage, FileSystem.documentDirectory) }}
+            style={{ width: 96, height: 96, borderRadius: 48 }}
+          />
         ) : (
           <View style={{ width: 96, height: 96, borderRadius: 48, backgroundColor: '#ddd' }} />
         )}

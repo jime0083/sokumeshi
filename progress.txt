@@ -157,11 +157,12 @@ Phase 3: 不具合修正
               (4) 画面の見た目に変化なし (5) `npm run typecheck` / `npm test` 緑
     ※完了(2026-11-26): security指摘なし・レビューFAIL1回(超過アラートに前置きが付く→ユーザー決定で文言のみ表示に修正)後PASS(テンプレート1・4をEmulatorで保存しJPEG確認・カメラロールPNG確認・33 tests/22 rules tests/typecheck/lint 緑)
 
-[ ] 3-4 プロフィール写真の永続化 [security]
+[x] 3-4 プロフィール写真の永続化 [security]
     内容: §4.3 のとおり選択時に documentDirectory/profile/ へコピーし相対ファイル名を保存、表示時に解決。起動時の既存パス移行。
           Firestore へ送る personalInfo から profileImage を除く
     完了条件: (1) コピー・解決・移行のユニットテスト (2) シミュレータでアプリ再起動後も写真が表示される
               (3) 送信データに profileImage がないユニットテスト (4) `npm run typecheck` / `npm test` 緑
+    ※完了(2026-11-26): security指摘なし・レビューPASS(シミュレータで写真選択→完全再起動後も表示・persistは相対パス・旧ファイル削除を確認・51 tests/22 rules/typecheck/lint 緑)。旧データ移行の実機確認は W4 チェックリストに含める
 
 [ ] 3-5 ポートフォリオ URL の保存漏れ修正 [security]
     内容: preview.tsx の保存メタに portfolioLinks(空文字を除く)を含める
@@ -213,6 +214,11 @@ Phase 4: iOS 設定・プライバシー・品質
 [ ] 4-3 console 出力と LogBox 抑止の削除
     内容: app/ src/ components/ の console.* と LogBox.ignoreAllLogs を削除(エラー時の動作は変えない)
     完了条件: (1) grep で console. が0件 (2) LogBox.ignoreAllLogs が0件 (3) 型・lint・テスト緑
+
+[ ] 4-3b [調査] Metro の ENOENT 警告の原因調査(30分)(P-015)
+    内容: 開発時の Metro ログに出る `ENOENT ... scandir '.../.%2Fassets%2Fimages%2Ftemplates%2Fvertical'`(horizontal も)の原因を調べ、
+          リリースビルドに影響があるか(画像が欠けるか)を判断して報告する。コードは変更しない
+    完了条件: (1) 原因の特定と根拠 (2) リリースビルドへの影響有無の判断と根拠 (3) 修正が必要ならタスク案 (4) リポジトリに変更が残っていない
 
 [ ] 4-4 総合回帰確認と手動チェックリスト作成
     内容: 全テスト実行、シミュレータでの通し確認(Emulator 接続: 作成→保存→QR→Web表示→編集→再保存で URL 不変)、
