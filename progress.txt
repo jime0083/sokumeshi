@@ -169,12 +169,13 @@ Phase 3: 不具合修正
     完了条件: (1) 送信データに portfolioLinks が含まれるユニットテスト (2) `npm run test:rules` でこの形式が許可される (3) 型・テスト緑
     ※完了(2026-11-26): security指摘なし・レビューPASS(実ルーターで back 入力→保存し portfolioLinks=['URL']/両方空で[] を確認・v1.04 ルールテストで許可・54 tests/22 rules/typecheck/lint 緑)
 
-[ ] 3-6 Web 名刺ページの Web 表示一本化 [security]
+[x] 3-6 Web 名刺ページの Web 表示一本化 [security]
     内容: public/link.html からアプリ起動処理と800ms待機・§3.2 の1行を削除し、即時取得・表示にする。localhost では Firestore Emulator
           に接続。firebase.json の AASA ヘッダー設定を削除。public/index.hosting.html を public/index.html に改名(トップページを現状維持するため)
     完了条件: (1) Hosting+Firestore Emulator で PNG / JPEG 両方の名刺が表示される(スクリーンショット。ヘッドレスブラウザは
               リポジトリ外で一時使用) (2) 存在しない ID で「名刺が見つかりませんでした。」 (3) `sokumeishi://` がコード上0件
               (4) 見出し・画像の見た目は現状と同じ
+    ※完了(2026-11-28): security指摘なし・レビューPASS(Emulator+Chromeヘッドレスで PNG/JPEG 名刺表示・存在しないIDの文言・AASA 404・sokumeishi:// 0件・本番トップと public/index.html 完全一致・54 tests/22 rules/typecheck/lint 緑)
 
 [ ] 3-7 本番 Hosting 反映の確認(読み取りのみ)
     ※開始前確認: manual-work W3(Hosting の本番デプロイ)完了必須
